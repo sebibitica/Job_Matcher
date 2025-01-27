@@ -21,7 +21,7 @@ class CVProcessor:
         text=self.extractor.extract_text()
         print("Processing text...")
         response=self.embedding_client.create(text)
-        return response
+        return response.data[0].embedding
 
 if __name__=="__main__":
     embedding_client=OpenAIEmbeddingClient()
