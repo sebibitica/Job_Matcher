@@ -4,6 +4,7 @@ import zipfile
 import json
 from datetime import datetime
 from io import BytesIO
+from dotenv import load_dotenv
 
 from adobe.pdfservices.operation.auth.service_principal_credentials import ServicePrincipalCredentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
@@ -16,15 +17,20 @@ from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_element_type
 from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_pdf_params import ExtractPDFParams
 from adobe.pdfservices.operation.pdfjobs.result.extract_pdf_result import ExtractPDFResult
 
-logging.basicConfig(level=logging.INFO)
+load_dotenv()
+
+adobe_client_id = os.getenv('ADOBE_PDF_SERVICES_CLIENT_ID')
+adobe_client_secret = os.getenv('ADOBE_PDF_SERVICES_CLIENT_SECRET')
+
+# logging.basicConfig(level=logging.INFO)
 
 
 class PDFExtractor:
     def __init__(self, pdf_file_path: str):
         # Initial setup, create credentials instance
         credentials = ServicePrincipalCredentials(
-            client_id=os.getenv('PDF_SERVICES_CLIENT_ID'),
-            client_secret=os.getenv('PDF_SERVICES_CLIENT_SECRET')
+            client_id=adobe_client_id,
+            client_secret=adobe_client_secret
         )
 
         # Create a PDF Services instance
@@ -90,7 +96,7 @@ class PDFExtractor:
 
 
 if __name__ == "__main__":
-    extractor = PDFExtractor("example.pdf")
+    extractor = PDFExtractor("sample_data/example2.pdf")
 
     extracted_text = extractor.extract_text()
     print(extracted_text)

@@ -18,7 +18,7 @@ class DOCXExtractor:
 
 
 if __name__ == "__main__":
-    extractor = DOCXExtractor("example5.docx")
+    extractor = DOCXExtractor("sample_data/example5.docx")
 
     extracted_text = extractor.extract_text()
     print(extracted_text)

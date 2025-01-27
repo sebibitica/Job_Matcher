@@ -1,3 +1,4 @@
 pdfservices-sdk==4.0.0
 openai
-doc2txt
+docx2txt
+elasticsearch
