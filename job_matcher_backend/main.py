@@ -1,9 +1,10 @@
 from src.jobs_matcher.jobs_matcher import JobsMatcher
 
 def main():
-    cv_path = "sample_data/example5.docx"
+    cv_path = "sample_data/example4.docx"
+    file = open(cv_path, "rb")
     
-    matcher = JobsMatcher(cv_path)
+    matcher = JobsMatcher(file)
     
     try:
         matcher.process_cv()

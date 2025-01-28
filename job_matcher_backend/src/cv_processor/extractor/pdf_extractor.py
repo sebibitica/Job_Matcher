@@ -2,7 +2,6 @@ import logging
 import os
 import zipfile
 import json
-from datetime import datetime
 from io import BytesIO
 from dotenv import load_dotenv
 
@@ -26,7 +25,11 @@ adobe_client_secret = os.getenv('ADOBE_PDF_SERVICES_CLIENT_SECRET')
 
 
 class PDFExtractor:
-    def __init__(self, pdf_file_path: str):
+    def __init__(self, file_stream: BytesIO):
+        if not file_stream:
+            raise ValueError("file_stream must be provided.")
+        self.file_stream = file_stream
+
         # Initial setup, create credentials instance
         credentials = ServicePrincipalCredentials(
             client_id=adobe_client_id,
@@ -36,16 +39,11 @@ class PDFExtractor:
         # Create a PDF Services instance
         self.pdf_services = PDFServices(credentials=credentials)
 
-        # Get file path of the PDF File
-        self.file_path = pdf_file_path
-
 
     def extract_text(self) -> str:
         try:
             # Open and read input PDF file
-            file = open(self.file_path, 'rb')
-            input_stream = file.read()
-            file.close()
+            input_stream = self.file_stream
 
             # Create an asset from the input file and upload
             input_asset = self.pdf_services.upload(input_stream=input_stream, mime_type=PDFServicesMediaType.PDF)
@@ -96,7 +94,8 @@ class PDFExtractor:
 
 
 if __name__ == "__main__":
-    extractor = PDFExtractor("sample_data/example2.pdf")
+    file = open("sample_data/example1.pdf", "rb")
+    extractor = PDFExtractor(file)
 
     extracted_text = extractor.extract_text()
     print(extracted_text)

@@ -27,7 +27,7 @@ class ElasticsearchClient:
                     "k": k,
                     "num_candidates": 100
                 },
-                "_source": ["job_title", "company", "location"],
+                "_source": ["job_title", "company", "location", "description", "job_url"],
                 "size": k
             }
         )

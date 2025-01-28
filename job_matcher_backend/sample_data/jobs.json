@@ -2,92 +2,302 @@
     {
       "job_title": "Software Engineer",
       "company": "Tech Innovations Inc.",
-      "location": "San Francisco, CA",
-      "description": "As a Software Engineer at Tech Innovations Inc., you will work on designing and developing advanced software applications, with a focus on cloud computing. You will collaborate with a dynamic team of engineers to build scalable and efficient systems for enterprise clients. This role requires proficiency in programming languages such as Python, Java, and JavaScript, along with experience in database management and cloud platforms like AWS and Azure. You will be responsible for testing, debugging, and maintaining the software to meet the highest standards of quality."
-    },
-    {
-      "job_title": "Product Manager",
-      "company": "NextGen Solutions",
-      "location": "Austin, TX",
-      "description": "NextGen Solutions is looking for a Product Manager to join their team. In this role, you will drive the vision, strategy, and execution of product development, focusing on customer experience and user interface design. You will work closely with engineers, designers, and marketing teams to bring new products to market. Your responsibilities include defining product requirements, conducting market research, and ensuring the timely launch of new features. A deep understanding of user needs and the ability to prioritize product features are key aspects of this role."
-    },
-    {
-      "job_title": "Marketing Director",
-      "company": "Global Enterprise Ltd.",
-      "location": "New York, NY",
-      "description": "Global Enterprise Ltd. is seeking a Marketing Director to lead their global marketing strategy. In this role, you will oversee all marketing initiatives across multiple channels, including digital, social media, and print. You will manage a team of marketing specialists and collaborate with sales and product teams to create impactful campaigns that drive brand awareness and revenue. You will also analyze market trends, customer feedback, and competitors to adjust marketing strategies. Extensive experience in B2B marketing and proven leadership skills are essential for this position."
-    },
-    {
-      "job_title": "UX Designer",
-      "company": "DesignWorks Studios",
-      "location": "Chicago, IL",
-      "description": "As a UX Designer at DesignWorks Studios, you will be responsible for creating intuitive and visually appealing user interfaces for web and mobile applications. You will work closely with product managers and developers to ensure the design process aligns with both user needs and technical constraints. Your tasks will include conducting user research, prototyping designs, and testing products to improve user experience. Experience in design tools such as Sketch, Figma, and Adobe XD, as well as a strong understanding of user-centered design principles, is required."
-    },
-    {
-      "job_title": "Financial Analyst",
-      "company": "FinanceCo Solutions",
-      "location": "Los Angeles, CA",
-      "description": "FinanceCo Solutions is looking for a detail-oriented Financial Analyst to join their team. The successful candidate will be responsible for analyzing financial data, preparing reports, and providing recommendations to senior management. You will assist with budgeting, forecasting, and financial modeling for various business units. Strong analytical skills, proficiency in Excel, and an understanding of financial principles such as cash flow, P&L, and balance sheets are crucial for this role. A degree in finance or accounting and relevant experience in the finance industry are preferred."
-    },
-    {
-      "job_title": "HR Manager",
-      "company": "PeopleFirst Enterprises",
-      "location": "Seattle, WA",
-      "description": "PeopleFirst Enterprises is hiring an HR Manager to oversee employee relations, recruitment, and performance management. You will lead efforts in talent acquisition, ensuring the hiring process is efficient and that candidates meet the company’s requirements. Additionally, you will manage employee training and development programs, ensuring that all employees have access to growth opportunities. Strong interpersonal and organizational skills, along with the ability to handle sensitive information, are necessary. A background in HR management and experience in labor laws are essential for success in this role."
-    },
-    {
-      "job_title": "Sales Executive",
-      "company": "Skyline Technologies",
-      "location": "Denver, CO",
-      "description": "Skyline Technologies is looking for a highly motivated Sales Executive to drive sales and business growth. In this role, you will prospect for new clients, build and maintain strong relationships, and close deals. You will present product solutions to clients and tailor pitches to meet their specific needs. Strong communication and negotiation skills are key, as is the ability to work independently and manage multiple accounts. This role requires a background in B2B sales, experience in software or technology industries, and a proven track record of meeting sales targets."
-    },
-    {
-      "job_title": "Graphic Designer",
-      "company": "Creative Studio",
-      "location": "Miami, FL",
-      "description": "Creative Studio is seeking a talented Graphic Designer to work on a variety of digital and print design projects. You will collaborate with marketing and content teams to create compelling visuals for advertisements, websites, branding, and social media. This role requires a strong portfolio demonstrating expertise in graphic design software such as Adobe Photoshop, Illustrator, and InDesign. A keen eye for detail, creativity, and an understanding of design principles like color theory and typography are essential."
+      "location": {
+        "country": "USA",
+        "city": "San Francisco"
+      },
+      "description": "We are looking for a passionate Software Engineer to design, develop, and install software solutions. Requirements: 3+ years of experience in software development, strong knowledge of JavaScript, React, and Node.js. This is a mid-level role requiring problem-solving skills and knowledge of modern development tools.",
+      "job_url": "https://www.example.com/software-engineer"
     },
     {
       "job_title": "Data Scientist",
-      "company": "DataTech Solutions",
-      "location": "Boston, MA",
-      "description": "DataTech Solutions is hiring a Data Scientist to work on analyzing large datasets and providing actionable insights. You will use machine learning algorithms, data modeling, and statistical analysis to develop predictive models and identify trends. You will collaborate with business analysts and product teams to implement data-driven strategies. A background in data science, proficiency in programming languages such as Python or R, and experience with SQL and big data tools are necessary. Experience with data visualization tools like Tableau or Power BI is a plus."
+      "company": "Data Analytics Corp.",
+      "location": {
+        "country": "Canada",
+        "city": "Toronto"
+      },
+      "description": "Seeking a Data Scientist to analyze complex data and deliver business insights. Requirements: 5+ years of experience, expertise in Python, R, and machine learning frameworks. Senior-level role; experience with big data technologies like Hadoop is a plus.",
+      "job_url": "https://www.example.com/data-scientist"
     },
     {
-      "job_title": "Operations Manager",
-      "company": "Prime Logistics",
-      "location": "Dallas, TX",
-      "description": "Prime Logistics is seeking an Operations Manager to oversee day-to-day operations within the company’s supply chain and logistics department. You will manage a team of logistics coordinators, ensure timely delivery of goods, and optimize supply chain processes. You will be responsible for improving operational efficiency, managing budgets, and ensuring compliance with safety and regulatory standards. Strong problem-solving skills and experience in logistics management are essential for this role. A background in operations or supply chain management and a degree in business administration are preferred."
+      "job_title": "Digital Marketing Specialist",
+      "company": "MarketMasters LLC",
+      "location": {
+        "country": "UK",
+        "city": "London"
+      },
+      "description": "We need a creative Digital Marketing Specialist to manage our campaigns. Requirements: 2+ years of experience in social media, SEO, and PPC campaigns. Junior to mid-level role, strong knowledge of Google Analytics is essential.",
+      "job_url": "https://www.example.com/digital-marketing-specialist"
+    },
+    {
+      "job_title": "Project Manager",
+      "company": "BuildRight Construction",
+      "location": {
+        "country": "USA",
+        "city": "New York"
+      },
+      "description": "We are hiring a Project Manager to oversee construction projects. Requirements: 7+ years of experience, PMP certification preferred. Senior-level role requiring leadership skills and proficiency in MS Project.",
+      "job_url": "https://www.example.com/project-manager"
+    },
+    {
+      "job_title": "Graphic Designer",
+      "company": "Creative Minds Studio",
+      "location": {
+        "country": "Australia",
+        "city": "Sydney"
+      },
+      "description": "Looking for a Graphic Designer to create visual concepts. Requirements: 3+ years of experience, proficiency in Adobe Creative Suite, and a strong portfolio. Mid-level role; knowledge of motion graphics is a bonus.",
+      "job_url": "https://www.example.com/graphic-designer"
+    },
+    {
+      "job_title": "Cybersecurity Analyst",
+      "company": "SecureIT Solutions",
+      "location": {
+        "country": "USA",
+        "city": "Austin"
+      },
+      "description": "Join our team as a Cybersecurity Analyst to protect our systems. Requirements: 4+ years of experience, knowledge of threat modeling, SIEM tools, and cybersecurity certifications like CISSP or CEH. Mid-level role with opportunities for growth.",
+      "job_url": "https://www.example.com/cybersecurity-analyst"
+    },
+    {
+      "job_title": "HR Manager",
+      "company": "Global Enterprises Ltd.",
+      "location": {
+        "country": "Germany",
+        "city": "Berlin"
+      },
+      "description": "Seeking an experienced HR Manager to lead our HR department. Requirements: 6+ years of experience, expertise in employee relations, and knowledge of German labor laws. Senior-level role requiring excellent communication skills.",
+      "job_url": "https://www.example.com/hr-manager"
+    },
+    {
+      "job_title": "Financial Analyst",
+      "company": "FinanceWorks Inc.",
+      "location": {
+        "country": "USA",
+        "city": "Chicago"
+      },
+      "description": "We are hiring a Financial Analyst to assess financial data and trends. Requirements: 3+ years of experience, a degree in Finance or Economics, and advanced Excel skills. Mid-level role; CFA certification is a plus.",
+      "job_url": "https://www.example.com/financial-analyst"
+    },
+    {
+      "job_title": "Mechanical Engineer",
+      "company": "Innovative Machines Ltd.",
+      "location": {
+        "country": "India",
+        "city": "Bangalore"
+      },
+      "description": "Looking for a Mechanical Engineer to design and oversee machinery production. Requirements: 5+ years of experience, knowledge of AutoCAD and SolidWorks. Senior-level role requiring strong technical expertise.",
+      "job_url": "https://www.example.com/mechanical-engineer"
     },
     {
       "job_title": "Content Writer",
-      "company": "Creative Minds Media",
-      "location": "Austin, TX",
-      "description": "Creative Minds Media is looking for a Content Writer to produce high-quality written content for websites, blogs, social media, and marketing campaigns. You will research topics, develop content strategies, and create engaging articles that resonate with target audiences. Your ability to write in various styles and formats, from long-form articles to concise social media posts, will be crucial. A background in writing, content strategy, and SEO best practices is preferred. Strong attention to detail, creativity, and the ability to meet deadlines are essential for success in this role."
+      "company": "Storyline Media",
+      "location": {
+        "country": "UK",
+        "city": "Manchester"
+      },
+      "description": "Hiring a Content Writer to create engaging articles and blogs. Requirements: 2+ years of experience, excellent writing skills, and knowledge of SEO best practices. Junior-level role with opportunities for creativity.",
+      "job_url": "https://www.example.com/content-writer"
     },
     {
-      "job_title": "Legal Counsel",
-      "company": "Global Enterprises LLC",
-      "location": "San Diego, CA",
-      "description": "Global Enterprises LLC is seeking a Legal Counsel to provide legal guidance on various business matters. You will review and draft contracts, manage compliance issues, and ensure that the company adheres to regulatory requirements. You will work closely with senior leadership to identify potential legal risks and provide strategies to mitigate them. This role requires a strong understanding of corporate law, contract negotiation, and dispute resolution. A law degree and experience in a corporate legal department are necessary."
+      "job_title": "AI Research Scientist",
+      "company": "AI Pioneers Lab",
+      "location": {
+        "country": "USA",
+        "city": "Boston"
+      },
+      "description": "Seeking an AI Research Scientist to develop innovative AI solutions. Requirements: PhD in AI or related field, 5+ years of research experience, and expertise in deep learning frameworks. Senior-level role with a focus on research and development.",
+      "job_url": "https://www.example.com/ai-research-scientist"
     },
     {
-      "job_title": "Customer Support Specialist",
-      "company": "SupportX Solutions",
-      "location": "Portland, OR",
-      "description": "SupportX Solutions is looking for a Customer Support Specialist to assist clients with product inquiries, technical issues, and account management. You will provide timely and accurate support via phone, email, and live chat. You will also escalate complex issues to senior support staff as needed. Strong communication skills, patience, and problem-solving abilities are required. A background in customer service or technical support is preferred, as is experience with CRM systems like Salesforce."
+      "job_title": "Customer Service Representative",
+      "company": "FriendlyCo",
+      "location": {
+        "country": "Philippines",
+        "city": "Manila"
+      },
+      "description": "Looking for a Customer Service Representative to handle customer inquiries. Requirements: 1+ year of experience in customer service, excellent communication skills, and a friendly attitude. Junior-level role with on-the-job training provided.",
+      "job_url": "https://www.example.com/customer-service-representative"
+    },
+    {
+      "job_title": "Electrician",
+      "company": "BrightElectric Inc.",
+      "location": {
+        "country": "USA",
+        "city": "Houston"
+      },
+      "description": "Hiring an experienced Electrician for residential and commercial projects. Requirements: 5+ years of experience, a valid electrician license, and knowledge of safety regulations. Mid-level role with opportunities for overtime.",
+      "job_url": "https://www.example.com/electrician"
     },
     {
       "job_title": "Web Developer",
-      "company": "WebWorks Agency",
-      "location": "Phoenix, AZ",
-      "description": "WebWorks Agency is hiring a Web Developer to join their team in creating and maintaining websites for clients. You will work on the full stack of web development, from front-end design to back-end database management. You will collaborate with designers and content creators to ensure that websites are visually appealing, functional, and user-friendly. Proficiency in HTML, CSS, JavaScript, and experience with CMS platforms such as WordPress or Drupal are essential for this role. A strong understanding of web security and performance optimization is also required."
+      "company": "CodeCrafters",
+      "location": {
+        "country": "India",
+        "city": "Mumbai"
+      },
+      "description": "Join us as a Web Developer to build responsive websites. Requirements: 3+ years of experience, expertise in HTML, CSS, JavaScript, and knowledge of WordPress. Mid-level role; familiarity with Vue.js or Angular is a bonus.",
+      "job_url": "https://www.example.com/web-developer"
     },
     {
-      "job_title": "Quality Assurance Engineer",
-      "company": "Innovative Technologies",
-      "location": "San Jose, CA",
-      "description": "Innovative Technologies is looking for a Quality Assurance Engineer to test and validate software products. You will develop test cases, execute tests, and ensure that the software meets the highest quality standards. You will collaborate with development teams to identify issues and recommend improvements. Strong knowledge of software testing methodologies, automated testing tools, and attention to detail are essential for this role. Experience with agile development and software development life cycle processes is a plus."
-    }
-  ]
+      "job_title": "Architect",
+      "company": "Design Studio Inc.",
+      "location": {
+        "country": "France",
+        "city": "Paris"
+      },
+      "description": "We need an Architect to design innovative buildings. Requirements: 7+ years of experience, a degree in Architecture, and proficiency in Revit and AutoCAD. Senior-level role with creative freedom.",
+      "job_url": "https://www.example.com/architect"
+    },
+    {
+        "job_title": "UX Designer",
+        "company": "PixelCraft Studio",
+        "location": {
+          "country": "USA",
+          "city": "Seattle"
+        },
+        "description": "We are looking for a UX Designer to enhance user experiences across our digital products. Requirements: 4+ years of experience in UX design, proficiency in Figma and Adobe XD, and a strong portfolio showcasing user-centered design. Mid-level role.",
+        "job_url": "https://www.example.com/ux-designer"
+      },
+      {
+        "job_title": "Sales Manager",
+        "company": "Global Sales Ltd.",
+        "location": {
+          "country": "South Africa",
+          "city": "Cape Town"
+        },
+        "description": "Hiring a Sales Manager to lead our regional sales team. Requirements: 6+ years of experience in sales, proven leadership skills, and a strong track record of meeting sales targets. Senior-level role.",
+        "job_url": "https://www.example.com/sales-manager"
+      },
+      {
+        "job_title": "Cloud Engineer",
+        "company": "CloudGen Solutions",
+        "location": {
+          "country": "Canada",
+          "city": "Vancouver"
+        },
+        "description": "Seeking a Cloud Engineer to develop and maintain cloud infrastructure. Requirements: 5+ years of experience, expertise in AWS or Azure, and knowledge of Kubernetes and Docker. Senior-level role.",
+        "job_url": "https://www.example.com/cloud-engineer"
+      },
+      {
+        "job_title": "Nurse Practitioner",
+        "company": "CareHealth Clinic",
+        "location": {
+          "country": "Australia",
+          "city": "Melbourne"
+        },
+        "description": "We are hiring a Nurse Practitioner to provide primary healthcare services. Requirements: 5+ years of experience, a valid nursing license, and excellent patient care skills. Mid to senior-level role.",
+        "job_url": "https://www.example.com/nurse-practitioner"
+      },
+      {
+        "job_title": "Business Analyst",
+        "company": "SolutionsCorp",
+        "location": {
+          "country": "USA",
+          "city": "San Diego"
+        },
+        "description": "Looking for a Business Analyst to identify business needs and solutions. Requirements: 3+ years of experience, strong analytical skills, and proficiency in business process modeling. Mid-level role.",
+        "job_url": "https://www.example.com/business-analyst"
+      },
+      {
+        "job_title": "Civil Engineer",
+        "company": "BuildPro Ltd.",
+        "location": {
+          "country": "UK",
+          "city": "Birmingham"
+        },
+        "description": "Join us as a Civil Engineer to design infrastructure projects. Requirements: 5+ years of experience, knowledge of structural analysis software, and a degree in Civil Engineering. Senior-level role.",
+        "job_url": "https://www.example.com/civil-engineer"
+      },
+      {
+        "job_title": "Operations Manager",
+        "company": "EfficientOps Inc.",
+        "location": {
+          "country": "USA",
+          "city": "Dallas"
+        },
+        "description": "Hiring an Operations Manager to streamline business processes. Requirements: 6+ years of experience, strong organizational skills, and expertise in logistics and supply chain management. Senior-level role.",
+        "job_url": "https://www.example.com/operations-manager"
+      },
+      {
+        "job_title": "Product Manager",
+        "company": "InnovateTech",
+        "location": {
+          "country": "India",
+          "city": "Hyderabad"
+        },
+        "description": "Seeking a Product Manager to oversee product development. Requirements: 5+ years of experience, expertise in Agile methodologies, and strong communication skills. Senior-level role.",
+        "job_url": "https://www.example.com/product-manager"
+      },
+      {
+        "job_title": "Social Media Manager",
+        "company": "ViralSocials",
+        "location": {
+          "country": "Brazil",
+          "city": "Rio de Janeiro"
+        },
+        "description": "Looking for a Social Media Manager to create and manage social campaigns. Requirements: 3+ years of experience, creativity, and strong knowledge of social media platforms. Mid-level role.",
+        "job_url": "https://www.example.com/social-media-manager"
+      },
+      {
+        "job_title": "Machine Learning Engineer",
+        "company": "AIWorks Ltd.",
+        "location": {
+          "country": "Singapore",
+          "city": "Singapore"
+        },
+        "description": "We need a Machine Learning Engineer to develop AI models. Requirements: 5+ years of experience in Python, TensorFlow, and PyTorch. Senior-level role with opportunities to work on cutting-edge AI projects.",
+        "job_url": "https://www.example.com/machine-learning-engineer"
+      },
+      {
+        "job_title": "Legal Advisor",
+        "company": "LawSolutions",
+        "location": {
+          "country": "UK",
+          "city": "Edinburgh"
+        },
+        "description": "Hiring a Legal Advisor to provide legal counsel on business matters. Requirements: 7+ years of experience, expertise in corporate law, and a valid license to practice law. Senior-level role.",
+        "job_url": "https://www.example.com/legal-advisor"
+      },
+      {
+        "job_title": "Interior Designer",
+        "company": "DreamSpaces Inc.",
+        "location": {
+          "country": "UAE",
+          "city": "Dubai"
+        },
+        "description": "Seeking an Interior Designer to create stylish interiors. Requirements: 4+ years of experience, a degree in Interior Design, and proficiency in design software. Mid-level role.",
+        "job_url": "https://www.example.com/interior-designer"
+      },
+      {
+        "job_title": "Pharmacist",
+        "company": "HealthPlus Pharmacy",
+        "location": {
+          "country": "USA",
+          "city": "Orlando"
+        },
+        "description": "Looking for a licensed Pharmacist to manage prescriptions and advise patients. Requirements: 5+ years of experience, a Pharm.D. degree, and a valid pharmacist license. Senior-level role.",
+        "job_url": "https://www.example.com/pharmacist"
+      },
+      {
+        "job_title": "Backend Developer",
+        "company": "CodeFlow Inc.",
+        "location": {
+          "country": "Germany",
+          "city": "Munich"
+        },
+        "description": "We need a Backend Developer to build scalable APIs. Requirements: 4+ years of experience in Python or Java, knowledge of SQL databases, and familiarity with cloud services. Mid-level role.",
+        "job_url": "https://www.example.com/backend-developer"
+      },
+      {
+        "job_title": "IT Support Specialist",
+        "company": "HelpDesk Heroes",
+        "location": {
+          "country": "USA",
+          "city": "Atlanta"
+        },
+        "description": "Hiring an IT Support Specialist to assist users with technical issues. Requirements: 2+ years of experience in IT support, knowledge of Windows and MacOS, and excellent troubleshooting skills. Junior to mid-level role.",
+        "job_url": "https://www.example.com/it-support-specialist"
+      }
+]
   

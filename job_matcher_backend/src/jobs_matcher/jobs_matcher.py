@@ -1,28 +1,19 @@
-from pathlib import Path
+from io import BytesIO
 from ..clients.es_client import ElasticsearchClient
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..cv_processor.cv_processor import CVProcessor
 
 class JobsMatcher:
-    def __init__(self, cv_path: str):
-        """ Initialize the JobsMatcher with the path to the CV file """
-        self.cv_path = Path(cv_path)
+    def __init__(self, file_stream: BytesIO):
+        """ Initialize the JobsMatcher with the CV byte stream """
+        self.file_stream = file_stream
         self.embedding_client = OpenAIEmbeddingClient()
         self.es_client = ElasticsearchClient()
         self.cv_embedding = None
 
-    def _validate_file(self):
-        """Check if the CV file exists and is valid"""
-        if not self.cv_path.exists():
-            raise FileNotFoundError(f"CV file not found: {self.cv_path}")
-        if self.cv_path.suffix.lower() not in ['.pdf', '.docx']:
-            raise ValueError(f"Unsupported file type: {self.cv_path.suffix}")
-
     def process_cv(self):
-        """Process the CV and generate its embedding"""
-        self._validate_file()
-        
-        cv_processor = CVProcessor(str(self.cv_path), self.embedding_client)
+        """ Process the CV to generate its embedding """
+        cv_processor = CVProcessor(self.file_stream, self.embedding_client)
         response = cv_processor.process()
         self.cv_embedding = response
 
@@ -31,7 +22,7 @@ class JobsMatcher:
         print("\nSearching for matching jobs...")
         if not self.cv_embedding:
             raise ValueError("CV embedding not generated. Call process_cv() first.")
-            
+        
         return self.es_client.search_jobs_by_embedding(self.cv_embedding, k=top_k)
 
     @staticmethod
@@ -44,10 +35,12 @@ class JobsMatcher:
             print(f"\n{idx}. {job['job_title']}")
             print(f"   Company: {job['company']}")
             print(f"   Location: {job['location']}")
+            print(f"   Job URL: {job['job_url']}")
             print(f"   Match Score: {score:.3f}")
 
+
 if __name__ == "__main__":
-    matcher = JobsMatcher("sample_data/example4.docx")
+    matcher = JobsMatcher(open("sample_data/example4.docx","rb"))
     try:
         matcher.process_cv()
         results = matcher.find_matching_jobs()
