@@ -1,0 +1,5 @@
+pdfservices-sdk==4.0.0
+openai
+docx2txt
+elasticsearch
+python-dotenv
