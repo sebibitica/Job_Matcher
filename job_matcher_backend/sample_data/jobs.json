@@ -298,6 +298,16 @@
         },
         "description": "Hiring an IT Support Specialist to assist users with technical issues. Requirements: 2+ years of experience in IT support, knowledge of Windows and MacOS, and excellent troubleshooting skills. Junior to mid-level role.",
         "job_url": "https://www.example.com/it-support-specialist"
+      },
+      {
+        "job_title": "Junior Developer (React-Native & Cloud)",
+        "company": "SebCompany",
+        "location": {
+                "country": "Romania",
+                "city": "Timisoara"
+              },
+        "description": "We're seeking an experienced React-Native Engineer. Experienced in developing applications, good with teamwork and multitasking. Also Cloud Expertise is a plus, if he knows Docker, Redis. Experience with english language and passionate to learn. It is a Junior role, so if he is still pursuing his Bachelors degree it is perfect.",
+        "job_url": "https://www.example.com/junior-react-native-cloud"
       }
 ]
   

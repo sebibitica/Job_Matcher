@@ -26,8 +26,92 @@
   }
   
   .app-header {
-    text-align: center;
-    margin-bottom: 3rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .header-logo {
+    text-decoration: none;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .header-logo h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    background-color: #4f92d9;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .auth-status {
+    display: flex;
+    align-items: center;
+  }
+  
+  .login-button,
+  .logout-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    transition: all 0.3s ease;
+  }
+  
+  .login-button {
+    background-color: #007bff; 
+    color: white;
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3; 
+  }
+  
+  .logout-button {
+    background-color: #f8f9fa; 
+    color: #333;
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333; 
+    color: white;
   }
   
   .app-header h1 {
@@ -48,10 +132,11 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: space-evenly;
   }
   
   .file-label {
-    flex: 1;
+    flex: 0.3;
     padding: 0.8rem 1.2rem;
     border: 2px dashed #cbd5e1;
     border-radius: 8px;
@@ -60,6 +145,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
   }
   
   .file-label:hover {
@@ -190,20 +276,51 @@
     color: #94a3b8;
     margin-bottom: 1.5rem;
   }
-  
-  .apply-button {
-    display: inline-block;
-    padding: 1rem 2rem;
-    background-color: var(--primary-color);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+
+  .job-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
   
-  .apply-button:hover {
-    background-color: #1d4ed8;
+  .apply-button {
+    flex: 0.2;
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745; /* Green color for "Mark as Applied" */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  
+  .apply-button.applied {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  .apply-button:hover:not(.applied) {
+    background-color: #218838; 
+  }
+  
+  .external-apply-button {
+    flex: 0.2;
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff; 
+    text-decoration: none;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 1rem;
+  }
+  
+  .external-apply-button:hover {
+    background-color: #0056b3; 
   }
   
   .job-content {
@@ -240,15 +357,6 @@
   
   .back-button:hover {
     background-color: #e0e0e0;
-  }
-
-  .file-label::after {
-    content: 'Browse';
-    margin-left: 1rem;
-    background-color: #e2e8f0;
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
   }
   
   .button-loading {
@@ -302,26 +410,7 @@
     font-weight: 500;
     transition: all 0.2s ease;
   }
-  
-  .login-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-  }
-  
-  .login-button:hover {
-    background-color: #1d4ed8;
-  }
-  
-  .logout-button {
-    background-color: #f1f5f9;
-    color: var(--text-color);
-    border: 1px solid #cbd5e1;
-  }
-  
-  .logout-button:hover {
-    background-color: #e2e8f0;
-  }
+
   
   /* Auth Forms */
   .auth-container {
@@ -426,6 +515,145 @@
     padding: 0;
     font-size: inherit;
   }
+
+  /* Saved Resumes Container */
+  .saved-resumes-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .resumes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Resume Item */
+  .resume-item {
+    position: relative;
+    padding: 1.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 120px;
+    background-image: url('../assets/cv.svg');
+    background-repeat: no-repeat;
+    background-position: right 8px bottom 8px;
+    background-size: 40px;
+  }
+
+  .resume-item.selected {
+    border-color: #2196f3;
+    background-color: #f5fbff;
+  }
+
+  .resume-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Resume Info */
+  .resume-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .filename {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .date {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  /* Delete Button */
+  .delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: url('../assets/delete.svg') no-repeat center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+
+  .delete-btn:hover {
+    opacity: 1;
+  }
+
+  /* Resume Actions */
+  .resume-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-top: 1.5rem;
+  }
+
+  .upload-new-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background-color: #f0f4ff;
+    border: 2px dashed #c2d1ff;
+    border-radius: 6px;
+    color: #2196f3;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .upload-new-btn:hover {
+    background-color: #e3ebff;
+    border-color: #2196f3;
+  }
+
+  .plus-icon {
+    font-weight: bold;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .get-jobs-btn {
+    padding: 0.75rem 2rem;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .get-jobs-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .uploading-text {
+    color: #666;
+  }
+
+  .applied-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 0.5em;
+  }
+  
   
   @keyframes spin {
     to {

@@ -11,21 +11,28 @@ const Header = () => {
         <Link to="/" className="header-logo">
             <h1>Job Matcher</h1>
         </Link>
-        <div className="auth-status">
-          {!isLoading && (
-            user ? (
-              <button onClick={logout} className="logout-button">
-                Logout
-              </button>
-            ) : (
-              <button 
-                onClick={() => navigate('/login')} 
-                className="login-button"
-              >
-                Login
-              </button>
-            )
+        <div className="nav-links">
+          {user && (
+            <Link to="/applied" className="nav-link">
+              Applied Jobs
+            </Link>
           )}
+          <div className="auth-status">
+            {!isLoading && (
+              user ? (
+                <button onClick={logout} className="logout-button">
+                  Logout
+                </button>
+              ) : (
+                <button 
+                  onClick={() => navigate('/login')} 
+                  className="login-button"
+                >
+                  Login
+                </button>
+              )
+            )}
+          </div>
         </div>
       </div>
     </header>
