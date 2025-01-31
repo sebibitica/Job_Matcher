@@ -44,14 +44,18 @@
   
   .header-logo {
     text-decoration: none;
-    color: #333;
     font-size: 1.5rem;
     font-weight: bold;
   }
   
   .header-logo h1 {
-    margin: 0;
-    font-size: 1.5rem;
+    font-family: "Goldman";
+    color: var(--primary-color);
+    transition: color 0.2s ease-in-out;
+  }
+
+  .header-logo:hover h1 {
+    color: var(--text-color); 
   }
   
   .nav-links {
@@ -116,7 +120,6 @@
   
   .app-header h1 {
     font-size: 2.5rem;
-    color: var(--primary-color);
     margin-bottom: 1rem;
   }
   
@@ -388,20 +391,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  .header-logo {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .header-logo:hover h1 {
-    color: #092572; 
-  }
-  
-  .header-titles h1 {
-    margin-bottom: 0.5rem;
-    transition: color 0.2s ease;
   }
   
   .auth-status button {

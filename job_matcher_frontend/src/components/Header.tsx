@@ -9,7 +9,7 @@ const Header = () => {
     <header className="app-header">
       <div className="header-content">
         <Link to="/" className="header-logo">
-            <h1>Job Matcher</h1>
+            <h1>Jobmatcher</h1>
         </Link>
         <div className="nav-links">
           {user && (

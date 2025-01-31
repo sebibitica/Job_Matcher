@@ -29,6 +29,8 @@ const App = () => {
       if (user) {
         try {
           const token = await user.getIdToken();
+          if (!token) return;
+
           const response = await axios.get(
             'http://127.0.0.1:8000/get_saved_resumes',
             { headers: { Authorization: `Bearer ${token}` } }
@@ -45,6 +47,7 @@ const App = () => {
     setMessage('');
     setFile(null);
     setSelectedResumeId(null);
+
     fetchSavedResumes();
   }, [user]);
 

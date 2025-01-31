@@ -42,7 +42,7 @@ class ElasticsearchClient:
         )
 
     def get_user_applications(self, user_id: str):
-        """Retrieve applications with active status only"""
+        """Retrieve applications with active status only, sorted by applied_date"""
         return self.client.search(
             index="user_applied_jobs",
             body={
@@ -55,7 +55,10 @@ class ElasticsearchClient:
                     }
                 },
                 "size": 1000,
-                "_source": ["job_id", "applied_date"]
+                "_source": ["job_id", "applied_date"],
+                "sort": [
+                    {"applied_date": {"order": "desc"}}
+                ]
             }
         )
     
