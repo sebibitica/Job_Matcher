@@ -4,14 +4,14 @@ from ..clients.es_client import ElasticsearchClient
 import hashlib
 
 def generate_job_id(job: dict) -> str:
-    unique_job_data = f"{job['company']}|{job['title']}|{job['job_url']}"
+    unique_job_data = f"{job['company']}|{job['job_title']}|{job['job_url']}"
     return hashlib.sha256(unique_job_data.encode()).hexdigest()
 
 def process_jobs():
     embedding_client = OpenAIEmbeddingClient()
     es_client = ElasticsearchClient()
 
-    with open('sample_data/jobs.json', 'r') as file:
+    with open('sample_data/jobs_old.json', 'r') as file:
         jobs_data = json.load(file)
 
     for index, job in enumerate(jobs_data, start=1):

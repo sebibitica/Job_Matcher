@@ -1,0 +1,28 @@
+{
+    "tests": [
+      {
+        "resume_id": "717f4da0-a155-43ec-a633-a6b4eda442a0",
+        "expected_jobs": ["job_1", "job_14", "job_29", "a7e107a06a865b4f0554355e92e7caee6c1f194ec48d8c1ab202b230779a1413","job_18","job_6"]
+      },
+      {
+        "resume_id": "2284ddac-e3ec-4ff1-9cf0-bd9880353536",
+        "expected_jobs": ["56d41518bde9d4e1712ca88beaf57b8e958bf7efbebead58d142a538655132d1", "30dd169308b6028a7963fd5342b8d61a8ca00a8d6b70aa4b882606b5558e3e30", "job_24", "job_12"]
+      },
+      {
+        "resume_id": "23380869-0f15-4e1d-8d50-c139eb7d5407",
+        "expected_jobs": ["98c7afb5fb4c57e089d9881c5c7a9ed5543cd10ecc4328d1e38a8927529ed894","900ed0652e4b21691c90ff409d3dfef1e16cc27455f296bed1177b235a182883", "770d903e4f6f9a8d7afa1a52bac371c8cf54c6180838fdb87a7a1c554c412f73"]
+      },
+      {
+        "resume_id": "d61669a4-bec7-4db8-91b7-30f854de7556",
+        "expected_jobs": ["8e551b9c4e2bb5961efc4518d4949b2ce4ea21f904f4026dae9a2901b88c52bd","1035b737d45801b37558f3f8cc0dca23da66431d4d69c762f239fa3f977298e8"]
+      },
+      {
+        "resume_id": "882acad2-c5c5-48c3-85ca-6dfe64deddd8",
+        "expected_jobs": ["e9a5f30138c6bdaf3401cd5c7859806db4dcc4234f5650be45d54a5fe6df0772", "job_21","job_15", "job_4"]
+      },
+      {
+        "resume_id": "3ea7f3e4-2912-4663-8f95-4ae6fe07317e",
+        "expected_jobs": ["4b6f93fe7619f8c96fd0df729f74cafbda69c1ea674a79124cff567f7d641d48","job_13", "2512c1692004e552bce08774321eea3bb337420edd2f87c1bf1f0fcc6862f8eb"]
+      }
+    ]
+  }

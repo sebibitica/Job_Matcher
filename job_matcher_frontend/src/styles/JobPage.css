@@ -1,0 +1,174 @@
+.job-page-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header section */
+  .job-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  
+  .job-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .job-header h2 {
+    font-size: 1.5rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+  }
+  
+  .location {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Action buttons */
+  .job-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .apply-button {
+    flex: 1;
+    padding: 1rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .apply-button.applied {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  .interview-button {
+    flex: 1;
+    padding: 1rem;
+    background-color: #dda733;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .external-apply-button {
+    flex: 1;
+    padding: 1rem;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Button interactions */
+  .apply-button:hover:not(.applied) { background-color: #218838; }
+  .interview-button:hover { background-color: #90591d; }
+  .external-apply-button:hover { background-color: #0056b3; }
+  
+  /* content */
+  .job-content {
+    padding: 2rem 0;
+  }
+  
+  .job-content h3 {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+    color: var(--text-color);
+  }
+  
+  .job-content ul,
+  .job-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .job-content p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+  
+  /* Back button */
+  .back-button {
+    background: #f0f0f0;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+  }
+  
+  .back-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .job-page-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+  
+    .job-header h1 {
+      font-size: 2rem;
+    }
+  
+    .job-header h2 {
+      font-size: 1.25rem;
+    }
+  
+    .job-buttons {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  
+    .job-content {
+      padding: 1rem 0;
+    }
+  
+    .job-content h3 {
+      font-size: 1.3rem;
+    }
+  
+    .job-content ul,
+    .job-content ol {
+      margin-left: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .job-page-container {
+      padding: 1rem;
+    }
+  
+    .job-header h1 {
+      font-size: 1.75rem;
+    }
+  
+    .location {
+      font-size: 1rem;
+    }
+  }

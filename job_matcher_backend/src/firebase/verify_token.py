@@ -15,7 +15,6 @@ async def get_current_user(request: Request):
     try:
         token = auth_header.split("Bearer ")[1]
         decoded_token = auth.verify_id_token(token, clock_skew_seconds=10)
-        print("Decoded token: ", decoded_token)
         return decoded_token['uid']
     except Exception as e:
         print("Error verifying ID token: ", e)

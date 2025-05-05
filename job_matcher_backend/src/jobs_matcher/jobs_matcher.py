@@ -38,6 +38,20 @@ class JobsMatcher:
         
         # Pass applied_job_ids to exclude them from the search results
         return self.find_matching_jobs(cv_embedding, top_k, exclude_job_ids=applied_job_ids)
+    
+    def get_matching_jobs_with_user_id(self, user_id: str, top_k: int = 10) -> dict:
+        """ Get matching jobs using a user ID to fetch its embedding """
+        print("\nSearching for matching jobs based on user ID...")
+        cv_embedding = self.es_client.get_user_embedding(user_id)
+        if not cv_embedding:
+            raise ValueError("User embedding not found.")
+        
+        # Fetch applied job IDs for the user
+        applied_jobs_response = self.es_client.get_user_applications(user_id)
+        applied_job_ids = [hit["_source"]["job_id"] for hit in applied_jobs_response["hits"]["hits"]]
+        
+        # Pass applied_job_ids to exclude them from the search results
+        return self.find_matching_jobs(cv_embedding, top_k, exclude_job_ids=applied_job_ids)
 
     @staticmethod
     def print_results(results: dict):
@@ -47,17 +61,19 @@ class JobsMatcher:
             score = hit['_score']
             job = hit['_source']
             print(f"\n{idx}. {job['job_title']}")
-            print(f"   Company: {job['company']}")
-            print(f"   Location: {job['location']}")
-            print(f"   Job URL: {job['job_url']}")
+            print(f"   Job ID: {hit['_id']}")
+            # print(f"   Company: {job['company']}")
+            # print(f"   Location: {job['location']}")
+            # print(f"   Job URL: {job['job_url']}")
             print(f"   Match Score: {score:.3f}")
+            # print(f"   Job Description: {job['description']}")
 
 
 if __name__ == "__main__":
     matcher = JobsMatcher()
     try:
         # results = matcher.get_matching_jobs_by_file(open("sample_data/example4.docx", "rb"))
-        results=matcher.get_matching_jobs_with_resume_id(user_id="A81eScgtsdbAKIhVzUtXclWk7A02", resume_id="1a116567-fa47-478b-aa57-500b7a1588fe")
+        results=matcher.get_matching_jobs_with_resume_id(user_id="A81eScgtsdbAKIhVzUtXclWk7A02", resume_id="882acad2-c5c5-48c3-85ca-6dfe64deddd8")
         matcher.print_results(results)
     except Exception as e:
         print(f"Error: {str(e)}")

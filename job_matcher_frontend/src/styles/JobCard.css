@@ -1,0 +1,64 @@
+.job-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .job-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .score-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .job-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+  }
+  
+  .job-card .company {
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  
+  .job-card .location {
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .applied-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 0.5em;
+  }
+
+  .delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: url('../assets/delete.svg') no-repeat center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+  
+  .delete-btn:hover {
+    opacity: 1;
+  }

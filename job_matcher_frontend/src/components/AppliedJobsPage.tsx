@@ -44,7 +44,7 @@ const AppliedJobsPage = () => {
   };
 
   return (
-    <div className="applied-jobs-page">
+    <>
       <h2>Hey, {user?.displayName}!</h2>
       <h2>Here are your applied jobs:</h2>
       {isLoading ? (
@@ -56,7 +56,7 @@ const AppliedJobsPage = () => {
           <div>No applied jobs found</div>
         )
       )}
-    </div>
+    </>
   );
 };
 

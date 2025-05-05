@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
+import '../styles/Auth.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');

@@ -3,3 +3,6 @@ openai
 docx2txt
 elasticsearch
 python-dotenv
+fastapi
+uvicorn
+google-cloud-firestore

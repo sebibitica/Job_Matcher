@@ -1,6 +1,7 @@
 import React from 'react';
 import { UnifiedJob } from '../types/Job';
 import JobCard from './JobCard';
+import '../styles/JobList.css';
 
 interface JobListProps {
   jobs: UnifiedJob[];

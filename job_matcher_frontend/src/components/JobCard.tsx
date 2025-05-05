@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import deleteIcon from '../assets/delete.svg';
+import '../styles/JobCard.css';
 
 interface JobCardProps {
   job: UnifiedJob;

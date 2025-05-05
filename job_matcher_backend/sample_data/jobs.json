@@ -308,6 +308,167 @@
               },
         "description": "We're seeking an experienced React-Native Engineer. Experienced in developing applications, good with teamwork and multitasking. Also Cloud Expertise is a plus, if he knows Docker, Redis. Experience with english language and passionate to learn. It is a Junior role, so if he is still pursuing his Bachelors degree it is perfect.",
         "job_url": "https://www.example.com/junior-react-native-cloud"
+      },
+      {
+        "job_title": "Barista",
+        "company": "Caffe Aroma",
+        "location": { "country": "USA", "city": "New York" },
+        "description": "We are looking for an experienced Barista to join our team. Responsibilities include preparing coffee and other beverages, maintaining cleanliness, and providing excellent customer service. Previous experience in a café is preferred but not required.",
+        "job_url": "https://www.example.com/barista"
+      },
+      {
+        "job_title": "Chef",
+        "company": "Gourmet Bistro",
+        "location": { "country": "France", "city": "Paris" },
+        "description": "Seeking a skilled Chef to oversee our kitchen. The role involves menu planning, food preparation, and kitchen staff management. At least 5 years of experience in a fine-dining environment required.",
+        "job_url": "https://www.example.com/chef"
+      },
+      {
+        "job_title": "Welder",
+        "company": "SteelWorks Ltd.",
+        "location": { "country": "Germany", "city": "Berlin" },
+        "description": "We need a certified Welder to join our team. The job includes welding and fabricating metal components, following safety protocols, and maintaining tools. Experience in MIG/TIG welding is a plus.",
+        "job_url": "https://www.example.com/welder"
+      },
+      {
+        "job_title": "Construction Engineer",
+        "company": "BuildTech Inc.",
+        "location": { "country": "UK", "city": "London" },
+        "description": "Hiring a Construction Engineer to oversee site projects, manage structural designs, and coordinate teams. A degree in Civil Engineering and 3+ years of experience required.",
+        "job_url": "https://www.example.com/construction-engineer"
+      },
+      {
+        "job_title": "Registered Nurse",
+        "company": "HealthFirst Hospital",
+        "location": { "country": "Canada", "city": "Toronto" },
+        "description": "Looking for a Registered Nurse to provide patient care, administer medication, and coordinate with doctors. A valid nursing license and 2+ years of hospital experience are mandatory.",
+        "job_url": "https://www.example.com/nurse"
+      },
+      {
+        "job_title": "Software Developer",
+        "company": "TechSolutions",
+        "location": { "country": "USA", "city": "San Francisco" },
+        "description": "Seeking a Software Developer with expertise in Python and JavaScript. The role involves building web applications, maintaining databases, and collaborating with product teams. Remote work available.",
+        "job_url": "https://www.example.com/software-developer"
+      },
+      {
+        "job_title": "Electrician",
+        "company": "Bright Sparks",
+        "location": { "country": "Australia", "city": "Sydney" },
+        "description": "We are hiring an experienced Electrician to install and maintain electrical systems in residential and commercial buildings. Must have a valid electrician’s license.",
+        "job_url": "https://www.example.com/electrician"
+      },
+      {
+        "job_title": "Graphic Designer",
+        "company": "Creative Studios",
+        "location": { "country": "Italy", "city": "Milan" },
+        "description": "Looking for a Graphic Designer to create visually appealing designs for print and digital media. Proficiency in Adobe Suite and a strong portfolio required.",
+        "job_url": "https://www.example.com/graphic-designer"
+      },
+      {
+        "job_title": "Mechanical Engineer",
+        "company": "AutoTech Corp.",
+        "location": { "country": "Japan", "city": "Tokyo" },
+        "description": "Hiring a Mechanical Engineer to design, analyze, and test automotive components. A degree in Mechanical Engineering and experience in CAD software required.",
+        "job_url": "https://www.example.com/mechanical-engineer"
+      },
+      {
+        "job_title": "Marketing Manager",
+        "company": "BrandBoost",
+        "location": { "country": "USA", "city": "Los Angeles" },
+        "description": "We are looking for an experienced Marketing Manager to develop and execute campaigns. The role involves brand management, digital marketing, and customer engagement. 5+ years of experience preferred.",
+        "job_url": "https://www.example.com/marketing-manager"
+      },
+      {
+        "job_title": "Teacher",
+        "company": "Springfield High School",
+        "location": { "country": "USA", "city": "Boston" },
+        "description": "Hiring a passionate Teacher for high school students. Responsibilities include lesson planning, student evaluation, and classroom management. A teaching certification is required.",
+        "job_url": "https://www.example.com/teacher"
+      },
+      {
+        "job_title": "Delivery Driver",
+        "company": "QuickShip Logistics",
+        "location": { "country": "UK", "city": "Manchester" },
+        "description": "Looking for a responsible Delivery Driver to transport packages safely and efficiently. A valid driver’s license and good driving record are necessary.",
+        "job_url": "https://www.example.com/delivery-driver"
+      },
+      {
+        "job_title": "Receptionist",
+        "company": "Hotel LuxStay",
+        "location": { "country": "Germany", "city": "Berlin" },
+        "description": "We are looking for a friendly and organized Receptionist to handle check-in/check-out processes, answer calls, and provide customer support. Previous experience in hospitality is a plus.",
+        "job_url": "https://www.example.com/receptionist"
+      },
+      {
+        "job_title": "Auto Mechanic",
+        "company": "AutoFix Garage",
+        "location": { "country": "USA", "city": "Detroit" },
+        "description": "Seeking an experienced Auto Mechanic to diagnose and repair vehicles, perform maintenance services, and ensure high-quality workmanship. ASE certification preferred.",
+        "job_url": "https://www.example.com/auto-mechanic"
+      },
+      {
+        "job_title": "Plumber",
+        "company": "FlowMaster Plumbing",
+        "location": { "country": "Canada", "city": "Vancouver" },
+        "description": "Hiring a skilled Plumber to install and repair piping systems, troubleshoot leaks, and ensure compliance with safety regulations. Must have a valid plumbing license.",
+        "job_url": "https://www.example.com/plumber"
+      },
+      {
+        "job_title": "Warehouse Worker",
+        "company": "FastTrack Logistics",
+        "location": { "country": "UK", "city": "Birmingham" },
+        "description": "Looking for a Warehouse Worker to manage inventory, load/unload goods, and maintain a clean workspace. Ability to lift heavy items is required.",
+        "job_url": "https://www.example.com/warehouse-worker"
+      },
+      {
+        "job_title": "Security Guard",
+        "company": "SafeZone Security",
+        "location": { "country": "Australia", "city": "Melbourne" },
+        "description": "Seeking a vigilant Security Guard to monitor premises, control access, and respond to security incidents. Previous security experience and a valid license required.",
+        "job_url": "https://www.example.com/security-guard"
+      },
+      {
+        "job_title": "Sales Associate",
+        "company": "TrendStyle Clothing",
+        "location": { "country": "France", "city": "Lyon" },
+        "description": "We are hiring a Sales Associate to assist customers, manage transactions, and maintain store displays. Strong communication and customer service skills are essential.",
+        "job_url": "https://www.example.com/sales-associate"
+      },
+      {
+        "job_title": "Taxi Driver",
+        "company": "CityRide Cabs",
+        "location": { "country": "Spain", "city": "Madrid" },
+        "description": "Hiring a reliable Taxi Driver to transport passengers safely and efficiently. A valid driver’s license and knowledge of city routes required.",
+        "job_url": "https://www.example.com/taxi-driver"
+      },
+      {
+        "job_title": "Farm Worker",
+        "company": "GreenHarvest Farms",
+        "location": { "country": "Netherlands", "city": "Amsterdam" },
+        "description": "Looking for a Farm Worker to assist with planting, harvesting, and general farm maintenance. Physical endurance and willingness to work outdoors are necessary.",
+        "job_url": "https://www.example.com/farm-worker"
+      },
+      {
+        "job_title": "Call Center Representative",
+        "company": "SupportConnect",
+        "location": { "country": "USA", "city": "Miami" },
+        "description": "Seeking a Call Center Representative to handle customer inquiries, provide solutions, and log interactions. Strong communication and problem-solving skills required.",
+        "job_url": "https://www.example.com/call-center-representative"
+      },
+      {
+        "job_title": "Personal Trainer",
+        "company": "FitLife Gym",
+        "location": { "country": "Italy", "city": "Rome" },
+        "description": "We are looking for a certified Personal Trainer to create fitness plans, guide clients, and track progress. A certification in fitness training is required.",
+        "job_url": "https://www.example.com/personal-trainer"
+      },
+      {
+        "job_title": "Uber Driver",
+        "company": "Uber",
+        "location": { "country": "Romania", "city": "Timisoara" },
+        "description": "Join Uber as a driver and earn on your own schedule! As an independent contractor, you'll use your vehicle to provide safe and reliable rides to passengers in your city. Enjoy flexible hours, competitive earnings, and access to in-app navigation and support. Must have a valid driver’s license, a reliable vehicle, and meet local requirements. Sign up today and start driving!",
+        "job_url": "https://www.example.com/uber-driver"
       }
 ]
   

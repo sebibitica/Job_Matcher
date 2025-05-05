@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError
 from dotenv import load_dotenv
 import os
 import uuid
@@ -11,6 +12,23 @@ class ElasticsearchClient:
             os.getenv('ELASTICSEARCH_URL'),
         )
         self.create_applied_jobs_index()
+
+    
+    def index_user_profile(self, user_id: str, document: dict):
+        return self.client.index(
+            index="user_profiles",
+            id=user_id,
+            document=document
+        )
+    
+    def search_user_profile(self, user_id: str):
+        try:
+            result = self.client.get(index="user_profiles", id=user_id)
+            return result["_source"]
+        except NotFoundError:
+            return None
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving user profile: {str(e)}")
     
     def index_job(self, job_id, job_data):
         return self.client.index(
@@ -19,20 +37,21 @@ class ElasticsearchClient:
             document=job_data
         )
     
-    def index_resume(self, index: str, id: str, document: dict):
-        return self.client.index(index=index, id=id, document=document)
+    # #delete soon
+    # def index_resume(self, index: str, id: str, document: dict):
+    #     return self.client.index(index=index, id=id, document=document)
     
-    
-    def get_user_resumes(self, user_id: str):
-        return self.client.search(
-            index="user_resumes",
-            body={
-                "query": {
-                    "term": {"user_id": user_id}
-                },
-                "_source": ["user_id", "filename", "upload_date"],
-            }
-        )
+    # # delete soon
+    # def get_user_resumes(self, user_id: str):
+    #     return self.client.search(
+    #         index="user_resumes",
+    #         body={
+    #             "query": {
+    #                 "term": {"user_id": user_id}
+    #             },
+    #             "_source": ["user_id", "filename", "upload_date"],
+    #         }
+    #     )
     
     def index_applied_job(self, document: dict):
         return self.client.index(
@@ -123,22 +142,30 @@ class ElasticsearchClient:
     def verify_application_ownership(self, application_id: str, user_id: str):
         response = self.client.get(index="user_applied_jobs", id=application_id)
         return response['_source']['user_id'] == user_id
-
-
-    def verify_resume_ownership(self, resume_id: str, user_id: str):
-        resume = self.client.get(index="user_resumes", id=resume_id)
-        return resume['_source']['user_id'] == user_id
     
-    def get_resume_embedding(self, resume_id: str, user_id: str):
-        if not self.verify_resume_ownership(resume_id, user_id):
-            raise ValueError("Not authorized to access this resume")
-        response = self.client.get(index="user_resumes", id=resume_id)
-        return response['_source']['embedding']
+    def get_user_embedding(self, user_id: str):
+        profile = self.search_user_profile(user_id)
+        if not profile:
+            return None
+        return profile.get("embedding")
+
+    # #delete soon
+    # def verify_resume_ownership(self, resume_id: str, user_id: str):
+    #     resume = self.client.get(index="user_resumes", id=resume_id)
+    #     return resume['_source']['user_id'] == user_id
     
-    def delete_resume(self, resume_id: str, user_id: str):
-        if not self.verify_resume_ownership(resume_id, user_id):
-            raise ValueError("Not authorized to delete this resume")
-        return self.client.delete(index="user_resumes", id=resume_id)
+    # # delete soon
+    # def get_resume_embedding(self, resume_id: str, user_id: str):
+    #     if not self.verify_resume_ownership(resume_id, user_id):
+    #         raise ValueError("Not authorized to access this resume")
+    #     response = self.client.get(index="user_resumes", id=resume_id)
+    #     return response['_source']['embedding']
+    
+    # #delete soon
+    # def delete_resume(self, resume_id: str, user_id: str):
+    #     if not self.verify_resume_ownership(resume_id, user_id):
+    #         raise ValueError("Not authorized to delete this resume")
+    #     return self.client.delete(index="user_resumes", id=resume_id)
     
     def delete_applied_job(self, application_id: str, user_id: str):
         if not self.verify_application_ownership(application_id, user_id):

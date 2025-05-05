@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
+import '../styles/Auth.css';
 
 export default function Register() {
   const [email, setEmail] = useState('');
