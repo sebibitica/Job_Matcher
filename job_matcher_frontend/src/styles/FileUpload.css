@@ -58,49 +58,6 @@
     cursor: not-allowed;
   }
   
-  /* Saved resumes section */
-  .saved-resumes-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .resumes-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  /* Resume card */
-  .resume-item {
-    position: relative;
-    padding: 1.5rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 120px;
-  }
-  
-  .resume-item.selected {
-    border-color: #2196f3;
-    background-color: #f5fbff;
-  }
-  
-  .resume-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  }
-  
-  /* Resume metadata */
-  .resume-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
   .filename {
     font-weight: 500;
     color: #333;
@@ -108,72 +65,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  
-  .date {
-    font-size: 0.85rem;
-    color: #666;
-  }
-  
-  /* Delete button */
-  .delete-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: url('../assets/delete.svg') no-repeat center;
-    width: 24px;
-    height: 24px;
-    border: none;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-  }
-  
-  .delete-btn:hover {
-    opacity: 1;
-  }
-  
-  /* Action buttons */
-  .resume-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    justify-content: space-evenly;
-    margin-top: 1.5rem;
-  }
-  
-  .upload-new-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    background-color: #f0f4ff;
-    border: 2px dashed #c2d1ff;
-    border-radius: 6px;
-    color: #2196f3;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .upload-new-btn:hover {
-    background-color: #e3ebff;
-    border-color: #2196f3;
-  }
-  
-  .get-jobs-btn {
-    padding: 0.75rem 2rem;
-    background-color: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-  }
-  
-  .get-jobs-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
   }
 
   .upload-instructions {

@@ -11,7 +11,6 @@ class ElasticsearchClient:
         self.client = Elasticsearch(
             os.getenv('ELASTICSEARCH_URL'),
         )
-        self.create_applied_jobs_index()
 
     
     def index_user_profile(self, user_id: str, document: dict):
@@ -36,22 +35,6 @@ class ElasticsearchClient:
             id=job_id,
             document=job_data
         )
-    
-    # #delete soon
-    # def index_resume(self, index: str, id: str, document: dict):
-    #     return self.client.index(index=index, id=id, document=document)
-    
-    # # delete soon
-    # def get_user_resumes(self, user_id: str):
-    #     return self.client.search(
-    #         index="user_resumes",
-    #         body={
-    #             "query": {
-    #                 "term": {"user_id": user_id}
-    #             },
-    #             "_source": ["user_id", "filename", "upload_date"],
-    #         }
-    #     )
     
     def index_applied_job(self, document: dict):
         return self.client.index(
@@ -148,24 +131,6 @@ class ElasticsearchClient:
         if not profile:
             return None
         return profile.get("embedding")
-
-    # #delete soon
-    # def verify_resume_ownership(self, resume_id: str, user_id: str):
-    #     resume = self.client.get(index="user_resumes", id=resume_id)
-    #     return resume['_source']['user_id'] == user_id
-    
-    # # delete soon
-    # def get_resume_embedding(self, resume_id: str, user_id: str):
-    #     if not self.verify_resume_ownership(resume_id, user_id):
-    #         raise ValueError("Not authorized to access this resume")
-    #     response = self.client.get(index="user_resumes", id=resume_id)
-    #     return response['_source']['embedding']
-    
-    # #delete soon
-    # def delete_resume(self, resume_id: str, user_id: str):
-    #     if not self.verify_resume_ownership(resume_id, user_id):
-    #         raise ValueError("Not authorized to delete this resume")
-    #     return self.client.delete(index="user_resumes", id=resume_id)
     
     def delete_applied_job(self, application_id: str, user_id: str):
         if not self.verify_application_ownership(application_id, user_id):
@@ -203,22 +168,6 @@ class ElasticsearchClient:
             index="jobs",
             body=query_body
         )
-
-    def create_applied_jobs_index(self):
-        if not self.client.indices.exists(index="user_applied_jobs"):
-            self.client.indices.create(
-                index="user_applied_jobs",
-                body={
-                    "mappings": {
-                        "properties": {
-                            "user_id": {"type": "keyword"},
-                            "job_id": {"type": "keyword"},
-                            "applied_date": {"type": "date"},
-                            "status": {"type": "keyword"}
-                        }
-                    }
-                }
-            )
 
 
 if __name__ == "__main__":

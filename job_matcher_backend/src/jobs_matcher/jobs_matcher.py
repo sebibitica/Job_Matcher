@@ -26,18 +26,6 @@ class JobsMatcher:
         """ Process the CV and find top K matching jobs """
         cv_embedding = self.process_cv(file_stream)
         return self.find_matching_jobs(cv_embedding, top_k)
-
-    def get_matching_jobs_with_resume_id(self, resume_id: str, user_id: str, top_k: int = 10) -> dict:
-        """ Get matching jobs using a resume ID to fetch its embedding """
-        print("\nSearching for matching jobs based on resume ID...")
-        cv_embedding = self.es_client.get_resume_embedding(resume_id, user_id)
-        
-        # Fetch applied job IDs for the user
-        applied_jobs_response = self.es_client.get_user_applications(user_id)
-        applied_job_ids = [hit["_source"]["job_id"] for hit in applied_jobs_response["hits"]["hits"]]
-        
-        # Pass applied_job_ids to exclude them from the search results
-        return self.find_matching_jobs(cv_embedding, top_k, exclude_job_ids=applied_job_ids)
     
     def get_matching_jobs_with_user_id(self, user_id: str, top_k: int = 10) -> dict:
         """ Get matching jobs using a user ID to fetch its embedding """

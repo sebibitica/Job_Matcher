@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
   // If user is not logged in, redirect to login page
 
   if (isLoading) {
-    return null; // Optionally, you can show a loading spinner or message
+    return null;
   }
 
   if (!user) {

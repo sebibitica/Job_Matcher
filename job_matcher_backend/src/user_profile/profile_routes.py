@@ -18,20 +18,6 @@ async def get_user_profile(user_id: str = Depends(get_current_user)):
         "date_created": profile.get("date_created")
     }
 
-@router.get("/get_user_profile")
-async def get_user_profile(user_id: str = Depends(get_current_user)):
-    profile = manager.get_user_profile(user_id)
-    if not profile:
-        return JSONResponse(
-            content={"error": "User profile not found"},
-            status_code=404,
-        )
-    return {
-        "user_id": user_id,
-        "embedding": profile.get("embedding"),
-        "date_created": profile.get("date_created")
-    }
-
 @router.post("/set_user_profile_by_file")
 async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = Depends(get_current_user)):
     try:
