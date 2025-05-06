@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Depends
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from io import BytesIO
 from src.jobs_matcher.jobs_matcher import JobsMatcher
@@ -8,6 +8,9 @@ import uvicorn
 from src.firebase.verify_token import get_current_user
 from src.interview import interview_routes
 from src.user_profile import profile_routes
+from src.clients.es_client import ElasticsearchClient
+from src.types.types import *
+from typing import List
 
 app = FastAPI()
 
@@ -23,6 +26,7 @@ app.add_middleware(
 
 jobs_matcher = JobsMatcher()
 job_apply_storage_handler = JobApplyStorageHandler()
+es_client = ElasticsearchClient()
 
 @app.post("/apply_to_job/{job_id}")
 async def apply_to_job(
@@ -42,7 +46,23 @@ async def apply_to_job(
 async def get_applied_jobs(user_id: str = Depends(get_current_user)):
     try:
         applications = await job_apply_storage_handler.get_enriched_applications(user_id)
-        return {"applications": applications}
+        if not applications:
+            return JSONResponse(content={"error": "No applications found"}, status_code=404)
+        apps = []
+        for app in applications:
+            app_data = AppliedJob(
+                id=app["job_id"],
+                job_title=app["job_data"]["job_title"],
+                company=app["job_data"]["company"],
+                location=app["job_data"]["location"],
+                application_id=app["application_id"],
+                applied_date=app["applied_date"],
+            )
+            apps.append(app_data)
+
+        print(apps)
+
+        return {"applications": apps}
     except Exception as e:
         return JSONResponse(
             content={"error": str(e)},
@@ -77,13 +97,39 @@ async def is_applied_job(
             status_code=500
         )
     
+@app.get("/jobs/{job_id}")
+async def get_job(
+    job_id: str
+):
+    try:
+        job = es_client.get_job(job_id)
+        if not job:
+            return JSONResponse(content={"error": "Job not found"}, status_code=404)
+        return {"job": job}
+    except Exception as e:
+        return JSONResponse(content={"error": "Failed to retrieve job", "details": str(e)}, status_code=500)
+    
 @app.get("/get_job_matches_by_profile")
 async def get_job_matches_by_profile(
     user_id: str = Depends(get_current_user)
 ):
     try:
         results = jobs_matcher.get_matching_jobs_with_user_id(user_id)
-        return {"message": "Job matching successful", "results": results['hits']['hits']}
+        if not results:
+            return JSONResponse(content={"error": "No matching jobs found"}, status_code=404)
+        jobs=[]
+        for hit in results['hits']['hits']:
+            source = hit["_source"]
+            job=MatchedJob(
+                id=hit["_id"],
+                job_title=source["job_title"],
+                company=source["company"],
+                location=source["location"],
+                score=hit["_score"]
+            )
+            jobs.append(job)
+
+        return {"message": "Job matching successful", "jobs": jobs}
     
     except Exception as e:
         return JSONResponse(content={"error": "Failed to match jobs", "details": str(e)}, status_code=500)
@@ -101,11 +147,68 @@ async def get_job_matches_by_file_upload(file: UploadFile = File(...)):
             )
 
         results = jobs_matcher.get_matching_jobs_by_file(file_bytes)
+        if not results:
+            return JSONResponse(content={"error": "No matching jobs found"}, status_code=404)
+        jobs=[]
+        for hit in results['hits']['hits']:
+            source = hit["_source"]
+            job=MatchedJob(
+                id=hit["_id"],
+                job_title=source["job_title"],
+                company=source["company"],
+                location=source["location"],
+                score=hit["_score"]
+            )
+            jobs.append(job)
 
-        return {"message": "Job matching successful", "results": results['hits']['hits']}
+        return {"message": "Job matching successful", "jobs": jobs}
 
     except Exception as e:
         return JSONResponse(content={"error": "Failed to process file", "details": str(e)}, status_code=500)
+    
+@app.post("/job_search", response_model=List[BaseJob])
+async def job_search(request: SearchRequest):
+    must_clauses = []
+
+    if request.query:
+        must_clauses.append({
+            "match": {
+                "job_title": {
+                    "query": request.query,
+                    "fuzziness": "AUTO"
+                }
+            }
+        })
+
+    if request.location:
+        if request.location.city:
+            must_clauses.append({"term": {"location.city.keyword": request.location.city}})
+        if request.location.country:
+            must_clauses.append({"term": {"location.country.keyword": request.location.country}})
+
+    try:
+        response = es_client.client.search(
+            index="jobs",
+            size=20,
+            query={
+                "bool": {
+                    "must": must_clauses
+                }
+            },
+             _source={
+                "excludes": ["embedding"]
+            }
+        )
+
+        jobs = [
+            BaseJob(id=hit["_id"], **hit["_source"])
+            for hit in response["hits"]["hits"]
+        ]
+
+        return jobs
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     
 app.include_router(interview_routes.router)
 app.include_router(profile_routes.router)

@@ -1,26 +1,26 @@
 // JobPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { UnifiedJob } from '../types/Job';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FullJobDetails } from '../types/Job';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import '../styles/JobPage.css';
 
 const JobPage: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const job = location.state?.job as UnifiedJob;
+  const [job, setJob] = useState<FullJobDetails | null>(null);
+  const {id} = useParams<{id: string}>();
   const [isApplied, setIsApplied] = useState(false);
   const [isStartingInterview, setIsStartingInterview] = useState(false);
 
   useEffect(() => {
     const checkAppliedStatus = async () => {
-      if (!user || !job) return;
+      if (!user || !id) return;
 
       try {
         const token = await user.getIdToken();
-        const response = await axios.get(`http://127.0.0.1:8000/is_applied_job/${job._id}`, {
+        const response = await axios.get(`http://127.0.0.1:8000/is_applied_job/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('Is applied:', response.data);
@@ -32,16 +32,34 @@ const JobPage: React.FC = () => {
     };
 
     checkAppliedStatus();
-  }, [user, job]);
+  }, [user]);
+
+  useEffect(() => {
+    const fetchJobData = async () => {
+      if (!id) return;
+
+      try {
+        const token = user ? await user.getIdToken() : null;
+        const response = await axios.get(`http://127.0.0.1:8000/jobs/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setJob(response.data.job);
+      } catch (error) {
+        console.error('Error fetching job data:', error);
+      }
+    };
+
+    fetchJobData();
+  }, [id]);
 
   const handleApplyClick = async () => {
-    if (!user) return;
+    if (!user || !job) return;
 
     try {
       const token = await user.getIdToken();
       if (!isApplied) {
         await axios.post(
-          `http://127.0.0.1:8000/apply_to_job/${job._id}`,
+          `http://127.0.0.1:8000/apply_to_job/${job.id}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -59,10 +77,10 @@ const JobPage: React.FC = () => {
       setIsStartingInterview(true);
       const token = await user.getIdToken();
       const response = await axios.post(
-        `http://127.0.0.1:8000/interviews/initiate/${job._id}`,
+        `http://127.0.0.1:8000/interviews/initiate/${job.id}`,
         {
-          job_title: job._source.job_title,
-          job_description: job._source.description
+          job_title: job.job_title,
+          job_description: job.description
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -91,10 +109,10 @@ const JobPage: React.FC = () => {
         &larr; Back to Results
       </button>
       <div className="job-header">
-        <h1>{job._source.job_title}</h1>
-        <h2>{job._source.company}</h2>
+        <h1>{job.job_title}</h1>
+        <h2>{job.company}</h2>
         <p className="location">
-          {job._source.location.city}, {job._source.location.country}
+          {job.location.city}, {job.location.country}
         </p>
         <div className="job-buttons">
           {user && (
@@ -115,7 +133,7 @@ const JobPage: React.FC = () => {
             </>
           )}
           <a
-            href={job._source.job_url}
+            href={job.job_url}
             target="_blank"
             rel="noopener noreferrer"
             className="external-apply-button"
@@ -125,7 +143,7 @@ const JobPage: React.FC = () => {
         </div>
       </div>
       <div className="job-content">
-        <div dangerouslySetInnerHTML={{ __html: job._source.description }} />
+        <div dangerouslySetInnerHTML={{ __html: job.description }} />
       </div>
     </div>
   );

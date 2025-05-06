@@ -1,7 +1,7 @@
 // HomePage.tsx
 import { useAuth } from '../context/AuthContext';
 import JobList from './JobList';
-import { JobResult } from '../types/Job';
+import {MatchedJob} from '../types/Job.ts'
 import FileUpload from './FileUpload.tsx';
 import '../styles/HomePage.css';
 
@@ -9,7 +9,7 @@ interface HomePageProps {
   file: File | null;
   onFileChange: (file: File | null) => void;
   onGetJobs: () => void;
-  jobs: JobResult[];
+  jobs: MatchedJob[];
   message: string;
   isLoading: boolean;
 }

@@ -1,12 +1,13 @@
 // AppliedJobsPage.tsx
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { AppliedJob } from '../types/Job';
 import axios from 'axios';
 import JobList from './JobList';
 
 const AppliedJobsPage = () => {
   const { user } = useAuth();
-  const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,16 +20,7 @@ const AppliedJobsPage = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         
-        const transformedJobs = response.data.applications.map((app: any) => ({
-          _id: app.job_id,
-          _source: app.job_data,
-          _score: -999,
-          application_id: app.application_id,
-          applied_date: app.applied_date
-        }));
-
-        
-        setAppliedJobs(transformedJobs);
+        setAppliedJobs(response.data.applications);
       } catch (error) {
         console.error('Error fetching applied jobs:', error);
       } finally {
@@ -40,7 +32,7 @@ const AppliedJobsPage = () => {
   }, [user]);
 
   const handleDelete = (jobId: string) => {
-    setAppliedJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+    setAppliedJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
   };
 
   return (

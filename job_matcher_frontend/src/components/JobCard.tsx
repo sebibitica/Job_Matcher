@@ -1,5 +1,5 @@
 import React from 'react';
-import { UnifiedJob } from '../types/Job';
+import { MatchedJob, AppliedJob } from '../types/Job';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -8,22 +8,23 @@ import deleteIcon from '../assets/delete.svg';
 import '../styles/JobCard.css';
 
 interface JobCardProps {
-  job: UnifiedJob;
-  onDelete?: (applicationId: string) => void;
+  job: MatchedJob | AppliedJob;
+  onDelete?: (jobId: string) => void;
 }
 
 const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
-  const scorePercentage = (job._score * 100).toFixed(1);
+  const isApplied = 'application_id' in job;
+  const isMatched = 'score' in job;
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const handleClick = () => {
-    navigate(`/job/${job._id}`, { state: { job } });
+    navigate(`/job/${job.id}`);
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent the card's onClick from firing
-    if (!user || !job) return;
+    if (!user || !isApplied) return;
 
     try {
       const token = await user.getIdToken();
@@ -31,9 +32,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if(onDelete){
-        onDelete(job._id);
-      }
+      onDelete?.(job.id);
     } catch (error) {
       console.error('Error deleting application:', error);
     }
@@ -49,17 +48,17 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
 
   return (
     <div className="job-card" onClick={handleClick} style={{ cursor: 'pointer' }}>
-      {job._score === -999 ? (
+      {isApplied? (
         <button className="delete-btn" onClick={handleDelete} >
           <img src={deleteIcon} alt="Delete" style={{width : "20px", height: "20px"}}/>
         </button>
-      ) : (
-        <div className="score-badge">{scorePercentage}% Match</div>
-      )}
-      <h3>{job._source.job_title}</h3>
-      <p className="company">{job._source.company}</p>
-      <p className="location">{job._source.location.city}, {job._source.location.country}</p>
-      {job.applied_date && (
+      ) : isMatched ? (
+        <div className="score-badge">{((job as MatchedJob).score * 100).toFixed(1)}% Match</div>
+      ) : null}
+      <h3>{job.job_title}</h3>
+      <p className="company">{job.company}</p>
+      <p className="location">{job.location.city}, {job.location.country}</p>
+      {'applied_date' in job && (
         <p className="applied-date">Applied on: {formatDate(job.applied_date)}</p>
       )}
     </div>

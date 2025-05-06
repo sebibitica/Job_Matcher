@@ -36,6 +36,16 @@ class ElasticsearchClient:
             document=job_data
         )
     
+    def get_job(self, job_id: str):
+        try:
+            result = self.client.get(index="jobs", id=job_id, _source_excludes=["embedding"])
+            result["_source"]["id"] = job_id
+            return result["_source"]
+        except NotFoundError:
+            return None
+        except Exception as e:
+            raise RuntimeError(f"Error retrieving job: {str(e)}")
+    
     def index_applied_job(self, document: dict):
         return self.client.index(
             index="user_applied_jobs",
@@ -70,7 +80,7 @@ class ElasticsearchClient:
             index="jobs",
             body={
                 "query": {"terms": {"_id": job_ids}},
-                "_source": ["job_title", "company", "location", "description", "job_url"],
+                "_source": ["job_title", "company", "location"],
                 "size": len(job_ids)
             }
         )

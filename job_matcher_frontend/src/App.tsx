@@ -9,14 +9,15 @@ import Login from './components/Login';
 import Register from './components/Register';
 import AppliedJobsPage from './components/AppliedJobsPage';
 import { useAuth } from './context/AuthContext';
-import { JobResult} from './types/Job';
+import {MatchedJob} from './types/Job';
 import axios from 'axios';
 import ProtectedRoute from './components/ProtectedRoute';
 import InterviewSimulation from './components/InterviewSimulation';
 import ProfilePage from './components/ProfilePage';
+import JobSearch from './components/JobSearch';
 
 const App = () => {
-  const [jobs, setJobs] = useState<JobResult[]>([]);
+  const [jobs, setJobs] = useState<MatchedJob[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +51,7 @@ const App = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
     
-        setJobs(jobsRes.data.results);
+        setJobs(jobsRes.data.jobs);
         setMessage(jobsRes.data.message || 'Job matches retrieved.');
       } catch (error) {
         console.error('Error fetching jobs:', error);
@@ -75,7 +76,7 @@ const App = () => {
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' } }
           );
-          setJobs(response.data.results);
+          setJobs(response.data.jobs);
           setMessage(response.data.message || 'Job matches retrieved.');
         } catch (error) {
           console.error('Error:', error);
@@ -110,6 +111,7 @@ const App = () => {
               <Route element={<ProtectedRoute />}>
                 <Route path="/applied" element={<AppliedJobsPage />} />
               </Route>
+              <Route path="/jobsearch" element={<JobSearch />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/interviews" element={<InterviewSimulation />} />
               </Route>
