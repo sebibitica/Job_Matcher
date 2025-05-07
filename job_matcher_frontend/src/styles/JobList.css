@@ -5,6 +5,12 @@
     margin-top: 2rem;
   }
 
+  .job-list.search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
 /* Mobile */
 @media (max-width: 768px) {
     .job-list {

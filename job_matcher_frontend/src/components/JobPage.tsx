@@ -106,7 +106,7 @@ const JobPage: React.FC = () => {
   return (
     <div className="job-page-container">
       <button onClick={() => navigate(-1)} className="back-button">
-        &larr; Back to Results
+        &larr; Back
       </button>
       <div className="job-header">
         <h1>{job.job_title}</h1>

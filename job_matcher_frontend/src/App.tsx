@@ -21,11 +21,21 @@ const App = () => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  const { user , isLoading: authLoading} = useAuth();
 
   useEffect(() => {
-    handleGetJobs();
+    if(!authLoading){
+      handleGetJobs();
+    }
+    if (!user){
+      setJobs([]);
+      setMessage('');
+    }
   }, [user]);
+
+  if (authLoading) {
+    return null;
+  }
 
   const handleGetJobs = async () => {
     if (user){
@@ -59,34 +69,36 @@ const App = () => {
       } finally {
         setIsLoading(false);
       }
-    } else {
-      // Logged out - use file upload
-        try {
-          setIsLoading(true);
-          
-          if (!file) {
-            return;
-          }
-
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const response = await axios.post(
-            'http://127.0.0.1:8000/get_job_matches_logged_out',
-            formData,
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-          );
-          setJobs(response.data.jobs);
-          setMessage(response.data.message || 'Job matches retrieved.');
-        } catch (error) {
-          console.error('Error:', error);
-          setMessage('Failed to get job matches. Please try again.');
-        }
-        finally {
-          setIsLoading(false);
-        }
     }
   };
+
+  const handleGetJobsLoggedOut = async () => {
+    // logged out -> get job matches using uploaded file
+    try {
+      setIsLoading(true);
+      
+      if (!file) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post(
+        'http://127.0.0.1:8000/get_job_matches_logged_out',
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      setJobs(response.data.jobs);
+      setMessage(response.data.message || 'Job matches retrieved.');
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('Failed to get job matches. Please try again.');
+    }
+    finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <Router>
@@ -101,7 +113,7 @@ const App = () => {
                   file={file}
                   onFileChange={setFile}
                   jobs={jobs}
-                  onGetJobs={handleGetJobs}
+                  onGetJobs={handleGetJobsLoggedOut}
                   message={message}
                   isLoading={isLoading}
                 />

@@ -37,7 +37,7 @@ const AppliedJobsPage = () => {
 
   return (
     <>
-      <h2>Hey, {user?.displayName}!</h2>
+      <br/>
       <h2>Here are your applied jobs:</h2>
       {isLoading ? (
         <div>Loading applied jobs...</div>
