@@ -14,7 +14,6 @@ import axios from 'axios';
 import ProtectedRoute from './components/ProtectedRoute';
 import InterviewSimulation from './components/InterviewSimulation';
 import ProfilePage from './components/ProfilePage';
-import JobSearch from './components/JobSearch';
 
 const App = () => {
   const [jobs, setJobs] = useState<MatchedJob[]>([]);
@@ -123,7 +122,6 @@ const App = () => {
               <Route element={<ProtectedRoute />}>
                 <Route path="/applied" element={<AppliedJobsPage />} />
               </Route>
-              <Route path="/jobsearch" element={<JobSearch />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/interviews" element={<InterviewSimulation />} />
               </Route>

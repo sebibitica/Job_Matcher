@@ -19,8 +19,9 @@
 }
 
 .search-bar-container {
-  position: relative;
   display: flex;
+  align-items: center;
+  gap: 10px; 
   justify-content: center;
   margin: 1rem 0;
   z-index: 110;
@@ -28,13 +29,44 @@
 
 .search-input {
   padding: 0.75rem 1.5rem;
-  width: 60%;
-  min-width: 300px;
+  width: 50%;  
+  min-width: 200px;
   border: 2px solid #007bff;
   border-radius: 2rem;
   font-size: 1rem;
   background: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.filter-toggle-btn {
+  padding: 6px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-inline-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-inline-container select,
+.filter-inline-container input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  min-width: 120px;
 }
 
 .search-results-container {
@@ -80,13 +112,25 @@
   color: #b91c1c;
 }
 
+
 @media (max-width: 768px) {
-  .search-input {
-    width: 90%;
-    min-width: unset;
-  }
   .search-results-container {
     width: 95%;
     min-width: unset;
+  }
+
+  .search-bar-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .search-input {
+    width: 100%;
+    min-width: unset;
+    margin-bottom: 10px;
+  }
+  .filter-inline-container {
+    width: 100%;
+    justify-content: center;
+    gap: 15px;
   }
 }

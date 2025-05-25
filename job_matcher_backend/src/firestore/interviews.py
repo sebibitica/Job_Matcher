@@ -49,6 +49,7 @@ class InterviewsManager(FirestoreClient):
         return [{
                     "id": doc.id,
                     "title": doc.to_dict().get("job_title"),
+                    "last_updated": doc.to_dict().get('last_updated').isoformat(),
                  } async for doc in docs]
     
     async def delete_interview(self, user_id: str, interview_id: str):

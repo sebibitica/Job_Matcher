@@ -4,10 +4,12 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import '../styles/InterviewSimulation.css';
 import deleteIcon from '../assets/delete.svg';
+import { format, parseISO } from 'date-fns';
 
 interface Interview {
   id: string;
   title: string;
+  last_updated: string;
 }
 
 interface Message {
@@ -27,19 +29,19 @@ const InterviewSimulation = () => {
   const navigate = useNavigate();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+  const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-    useEffect(() => {
-      scrollToBottom();
+  useEffect(() => {
+    scrollToBottom();
 
-      if (selectedInterviewId) {
-          scrollToBottom();
-      }
-    }, [messages, selectedInterviewId]);
+    if (selectedInterviewId) {
+        scrollToBottom();
+    }
+  }, [messages, selectedInterviewId]);
 
   useEffect(() => {
     const loadInterviews = async () => {
@@ -48,7 +50,13 @@ const InterviewSimulation = () => {
         const response = await axios.get('http://127.0.0.1:8000/interviews/user_interviews', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setInterviews(response.data.interviews);
+        
+        setInterviews(
+          response.data.interviews.sort(
+            (a: Interview, b: Interview) =>
+              new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime()
+          )
+        );
 
         if (location.state?.newInterviewId) {
             setSelectedInterviewId(location.state.newInterviewId);
@@ -143,6 +151,10 @@ const InterviewSimulation = () => {
     }
   };
 
+  const formatDate = (isoString: string) => {
+    return format(parseISO(isoString), 'PPp');
+  };
+
   return (
     <div className="interview-container">
       {/* Sidebar */}
@@ -176,7 +188,7 @@ const InterviewSimulation = () => {
                   <img src={deleteIcon} alt="Delete" style={{width : "20px", height: "20px"}}/>
                 </button>
               </div>
-              <span>{interview.id}</span>
+              <span>{formatDate(interview.last_updated)}</span>
             </div>
           ))}
         </div>

@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams} from 'react-router-dom';
 import { useRef } from 'react';
+import filterIcon from '../assets/filter.svg';
 
 interface HomePageProps {
   file: File | null;
@@ -33,25 +34,81 @@ const HomePage = ({
   const [isSearching, setIsSearching] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const listenerAddedRef = useRef(false);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [countries, setCountries] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
 
   useEffect(() => {
     setSearchTerm(searchQuery);
   }, [searchQuery]);
 
   useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get<string[]>('http://localhost:8000/get_countries');
+        setCountries(response.data);
+      } catch (error) {
+        console.error('Failed to fetch countries:', error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCountry) {
+      setCities([]);
+      setSelectedCity('');
+      return;
+    }
+    const fetchCities = async () => {
+      try {
+        const response = await axios.get<string[]>('http://localhost:8000/get_cities', {
+          params: { country: selectedCountry },
+        });
+        setCities(response.data);
+      } catch (error) {
+        console.error('Failed to fetch cities:', error);
+        setCities([]);
+      }
+    };
+    fetchCities();
+  }, [selectedCountry]);
+
+  useEffect(() => {
     const searchJobs = async () => {
-      if (!searchTerm.trim()) {
-        setSearchResults([]);
-        setIsSearching(false);
+      if (!user) {
+        console.warn('User not authenticated');
         return;
       }
 
       setIsSearching(true);
       try {
+        const token = await user.getIdToken();
+
+        const locationFilter = 
+          selectedCountry || selectedCity
+            ? {
+                country: selectedCountry || undefined,
+                city: selectedCity || undefined,
+              }
+            : undefined;
+
+        const payload = {
+          query: searchTerm,
+          location: locationFilter,
+        };
+
         const response = await axios.post<MatchedJob[]>(
           'http://localhost:8000/job_search',
-          { query: searchTerm },
-          { headers: { 'Content-Type': 'application/json' } }
+          payload,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
         );
         setSearchResults(response.data);
       } catch (error) {
@@ -63,7 +120,7 @@ const HomePage = ({
 
     const debounceTimer = setTimeout(searchJobs, 500);
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm]);
+  }, [searchTerm, user, selectedCountry, selectedCity]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -75,24 +132,19 @@ const HomePage = ({
         setSearchTerm('');
         setSearchResults([]);
         setSearchParams({});
+        setSelectedCountry('');
         listenerAddedRef.current = false; // Reset so we can add again later
         document.removeEventListener('mousedown', handleClickOutside);
         // Clean up the event listener
       }
     };
   
-    if (searchTerm && !listenerAddedRef.current) {
+    if ((searchTerm || selectedCountry) && !listenerAddedRef.current) {
       // Add event listener only if search term is present
       document.addEventListener('mousedown', handleClickOutside);
       listenerAddedRef.current = true;
     }
-  
-    if (!searchTerm && listenerAddedRef.current) {
-      // If search term is cleared, remove the event listener
-      document.removeEventListener('mousedown', handleClickOutside);
-      listenerAddedRef.current = false;
-    }
-  }, [searchTerm]);
+  }, [searchTerm, selectedCountry]);
 
   return (
     <div className="homepage-container">
@@ -110,9 +162,49 @@ const HomePage = ({
             }}
             className="search-input"
           />
+
+          <button
+            className="filter-toggle-btn"
+            onClick={() => setShowFilters((prev) => !prev)}
+            title="Toggle location filters"
+          >
+            <img src={filterIcon} alt="Filter" className="filter-icon" />
+          </button>
+
+          {showFilters && (
+            <div className="filter-inline-container">
+              <select
+                value={selectedCountry}
+                onChange={(e) => {
+                  setSelectedCountry(e.target.value);
+                  setSelectedCity('');
+                }}
+              >
+                <option value="">Select Country</option>
+                {countries.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                disabled={cities.length === 0}
+              >
+                <option value="">Select City (optional)</option>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
         
-        {(searchTerm || isSearching) && (
+        {(searchTerm || selectedCountry) && (
           <div className="search-results-container">
             {isSearching ? (
               <div className="search-status">Searching jobs...</div>
@@ -126,7 +218,7 @@ const HomePage = ({
       </div>
     )}
 
-      {(searchTerm || isSearching) && <div className="search-backdrop" />}
+      {(searchTerm || selectedCountry) && <div className="search-backdrop" />}
 
       {!user && (
         <FileUpload

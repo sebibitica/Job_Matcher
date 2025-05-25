@@ -7,3 +7,4 @@ fastapi
 uvicorn
 google-cloud-firestore
 pydantic
+numpy

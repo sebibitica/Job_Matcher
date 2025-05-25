@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, Query
 from fastapi.responses import JSONResponse
 from io import BytesIO
 from src.jobs_matcher.jobs_matcher import JobsMatcher
@@ -11,6 +11,8 @@ from src.user_profile import profile_routes
 from src.clients.es_client import ElasticsearchClient
 from src.types.types import *
 from typing import List
+import numpy as np
+import heapq
 
 app = FastAPI()
 
@@ -166,46 +168,92 @@ async def get_job_matches_by_file_upload(file: UploadFile = File(...)):
     except Exception as e:
         return JSONResponse(content={"error": "Failed to process file", "details": str(e)}, status_code=500)
     
-@app.post("/job_search", response_model=List[BaseJob])
-async def job_search(request: SearchRequest):
-    must_clauses = []
+@app.get("/get_countries")
+async def get_countries():
+    countries = es_client.get_jobs_countries()
+    return countries
 
-    if request.query:
+@app.get("/get_cities")
+async def get_cities(country: str = Query(...)):
+    cities = es_client.get_jobs_cities(country)
+    return cities
+    
+@app.post("/job_search", response_model=List[BaseJob])
+async def job_search(
+    request: SearchRequest,
+    user_id: str = Depends(get_current_user)
+):
+    must_clauses = []
+    filter_clauses = []
+
+    if request.query and request.query.strip():
         must_clauses.append({
-            "match": {
+            "match_phrase_prefix": {
                 "job_title": {
-                    "query": request.query,
-                    "fuzziness": "AUTO"
+                    "query": request.query
                 }
             }
         })
 
     if request.location:
         if request.location.city:
-            must_clauses.append({"term": {"location.city.keyword": request.location.city}})
+            filter_clauses.append({"term": {"location.city": request.location.city}})
         if request.location.country:
-            must_clauses.append({"term": {"location.country.keyword": request.location.country}})
+            filter_clauses.append({"term": {"location.country": request.location.country}})
 
     try:
-        response = es_client.client.search(
-            index="jobs",
-            size=20,
-            query={
+        if not must_clauses:
+            query_body = {
                 "bool": {
-                    "must": must_clauses
+                    "filter": filter_clauses if filter_clauses else [],
+                    "must": [{"match_all": {}}]
                 }
-            },
-             _source={
-                "excludes": ["embedding"]
             }
+        else:
+            query_body = {
+                "bool": {
+                    "must": must_clauses,
+                    "filter": filter_clauses
+                }
+            }
+
+        keyword_response = es_client.client.search(
+            index="jobs2",
+            size=100,
+            query=query_body,
+            _source=["job_title", "company", "location", "embedding"]
         )
 
-        jobs = [
-            BaseJob(id=hit["_id"], **hit["_source"])
-            for hit in response["hits"]["hits"]
-        ]
+        hits = keyword_response["hits"]["hits"]
 
-        return jobs
+        if not hits:
+            return []
+
+        user_embedding = es_client.get_user_embedding(user_id)
+        if not user_embedding:
+            # No user embedding? Return top 15 keyword matches only
+            return [
+                BaseJob(id=hit["_id"], **hit["_source"])
+                for hit in hits[:15]
+            ]
+
+        user_embedding_np = np.array(user_embedding)
+        user_norm = np.linalg.norm(user_embedding_np)
+
+        def cosine_similarity_np(vec):
+            vec_np = np.array(vec)
+            return np.dot(user_embedding_np, vec_np) / (user_norm * np.linalg.norm(vec_np) + 1e-10)
+
+        ranked_hits = heapq.nlargest(
+            15,
+            hits,
+            key=lambda hit: cosine_similarity_np(hit["_source"]["embedding"])
+        )
+
+        return [
+            BaseJob(id=hit["_id"], **{k: v for k, v in hit["_source"].items() if k != "embedding"})
+            for hit in ranked_hits[:15]
+        ]
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

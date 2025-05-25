@@ -31,14 +31,14 @@ class ElasticsearchClient:
     
     def index_job(self, job_id, job_data):
         return self.client.index(
-            index="jobs",
+            index="jobs2",
             id=job_id,
             document=job_data
         )
     
     def get_job(self, job_id: str):
         try:
-            result = self.client.get(index="jobs", id=job_id, _source_excludes=["embedding"])
+            result = self.client.get(index="jobs2", id=job_id, _source_excludes=["embedding"])
             result["_source"]["id"] = job_id
             return result["_source"]
         except NotFoundError:
@@ -77,7 +77,7 @@ class ElasticsearchClient:
     def get_jobs_batch(self, job_ids: list):
         """Get multiple jobs in a single query"""
         return self.client.search(
-            index="jobs",
+            index="jobs2",
             body={
                 "query": {"terms": {"_id": job_ids}},
                 "_source": ["job_title", "company", "location"],
@@ -175,9 +175,50 @@ class ElasticsearchClient:
             }
 
         return self.client.search(
-            index="jobs",
+            index="jobs2",
             body=query_body
         )
+
+    def get_jobs_countries(self):
+        response = self.client.search(
+            index="jobs2",
+            size=0,
+            aggs={
+                "distinct_countries": {
+                    "terms": {
+                        "field": "location.country",
+                        "size": 1000
+                    }
+                }
+            }
+        )
+        countries = [bucket['key'] for bucket in response['aggregations']['distinct_countries']['buckets']]
+        return countries
+
+    def get_jobs_cities(self, country: str):
+        response = self.client.search(
+            index="jobs2",
+            size=0,
+            query={"term": {"location.country": country}},
+            aggs={
+                "distinct_cities": {
+                    "terms": {
+                        "field": "location.city",
+                        "size": 1000
+                    }
+                }
+            }
+        )
+        cities = [bucket['key'] for bucket in response['aggregations']['distinct_cities']['buckets']]
+        return cities
+    
+    def get_metadata(self, doc_id: str, index: str = "scraper_metadata") -> dict:
+        if self.client.exists(index=index, id=doc_id):
+            return self.client.get(index=index, id=doc_id)["_source"]
+        return {}
+
+    def update_metadata(self, doc_id: str, data: dict, index: str = "scraper_metadata") -> None:
+        self.client.index(index=index, id=doc_id, document=data)
 
 
 if __name__ == "__main__":
