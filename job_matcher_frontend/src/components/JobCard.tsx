@@ -46,8 +46,20 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
       }
     };
 
+  const isNew = (() => {
+    if ('date_uploaded' in job && job.date_uploaded) {
+      const uploaded = new Date(job.date_uploaded);
+      const now = new Date();
+      return (now.getTime() - uploaded.getTime()) < 24 * 60 * 60 * 1000;
+    }
+    return false;
+  })();
+
   return (
     <div className="job-card" onClick={handleClick} style={{ cursor: 'pointer' }}>
+      {isNew && (
+        <div className="new-badge">NEW</div>
+      )}
       {isApplied? (
         <button className="delete-btn" onClick={handleDelete} >
           <img src={deleteIcon} alt="Delete" style={{width : "20px", height: "20px"}}/>

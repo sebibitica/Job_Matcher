@@ -23,9 +23,7 @@ class CVProcessor:
 
     def process(self):
         """ Process the CV to generate its embedding """
-        print("Extracting text...")
         text = self.extractor.extract_text()
-        print("Processing text...")
         response = self.embedding_client.create(text)
         return response.data[0].embedding
 

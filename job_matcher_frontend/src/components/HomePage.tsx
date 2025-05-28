@@ -221,21 +221,52 @@ const HomePage = ({
       {(searchTerm || selectedCountry) && <div className="search-backdrop" />}
 
       {!user && (
-        <FileUpload
-          selectedFile={file}
-          onFileChange={onFileChange}
-          onGetJobs={onGetJobs}
-          isLoading={isLoading}
-        />
+          <FileUpload
+            selectedFile={file}
+            onFileChange={onFileChange}
+            onGetJobs={onGetJobs}
+            isLoading={isLoading}
+          />
+      )}
+
+      {!user && jobs.length < 1 &&(
+        <div className="account-benefits">
+          <h2>Why create an account?</h2>
+          <ul>
+            <li>
+              <strong>AI Interview Practice:</strong> Get personalized interview simulations for specific jobs.
+            </li>
+            <li>
+              <strong>Save Your Progress:</strong> Keep track of jobs you’ve applied to and revisit them anytime.
+            </li>
+            <li>
+              <strong>Profile-Based Search:</strong> Instantly search and match jobs based on your saved profile.
+            </li>
+          </ul>
+          <div className="benefits-cta">
+            <span>Unlock your full job search potential — <a href="/register">create your free account now!</a></span>
+          </div>
+        </div>
       )}
 
       {message && !message.toLowerCase().includes('successful') && (
-        <div className={`message ${message.includes('successful') ? 'success' : 'error'}`}>
+        <div className={`message-home ${message.includes('successful') ? 'success' : 'error'}`}>
           {message}
         </div>
       )}
 
-      {jobs.length > 0 && user && <> <h2> Hi {user.displayName || ''}, </h2> <h3>Your profile matches these jobs:</h3> <JobList jobs={jobs}/> </> }
+      {jobs.length > 0 && user && <> 
+        <h2> Hi {user.displayName || ''}, </h2> 
+        <h3>Your profile matches these jobs:</h3> 
+        <JobList jobs={jobs}/> 
+      </>}
+
+      {jobs.length > 0 && !user && (
+        <>
+          <h3>Your resume matches these jobs:</h3>
+          <JobList jobs={jobs}/>
+        </>
+      )}
     </div>
   );
 };

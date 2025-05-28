@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 
 class JobLocation(BaseModel):
     country: str
@@ -10,6 +10,7 @@ class BaseJob(BaseModel):
     job_title: str
     company: str
     location: JobLocation
+    date_uploaded: str
 
 class MatchedJob(BaseJob):
     score: float

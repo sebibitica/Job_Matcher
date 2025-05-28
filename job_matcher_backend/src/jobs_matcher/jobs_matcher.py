@@ -2,6 +2,7 @@ from io import BytesIO
 from ..clients.es_client import ElasticsearchClient
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..cv_processor.cv_processor import CVProcessor
+from ..types.types import MatchedJob
 
 class JobsMatcher:
     def __init__(self):
@@ -14,7 +15,7 @@ class JobsMatcher:
         cv_processor = CVProcessor(file_stream, self.embedding_client)
         return cv_processor.process()
 
-    def find_matching_jobs(self, cv_embedding, top_k: int = 10, exclude_job_ids: list = None) -> dict:
+    def find_matching_jobs(self, cv_embedding, top_k: int = 15, exclude_job_ids: list = None) -> list[MatchedJob]:
         """ Find top K matching jobs based on the CV embedding """
         print("\nSearching for matching jobs...")
         if not cv_embedding:
@@ -22,12 +23,12 @@ class JobsMatcher:
         
         return self.es_client.search_jobs_by_embedding(cv_embedding, k=top_k, exclude_job_ids=exclude_job_ids)
 
-    def get_matching_jobs_by_file(self, file_stream: BytesIO, top_k: int = 10):
+    def get_matching_jobs_by_file(self, file_stream: BytesIO, top_k: int = 15)-> list[MatchedJob]:
         """ Process the CV and find top K matching jobs """
         cv_embedding = self.process_cv(file_stream)
         return self.find_matching_jobs(cv_embedding, top_k)
     
-    def get_matching_jobs_with_user_id(self, user_id: str, top_k: int = 10) -> dict:
+    def get_matching_jobs_with_user_id(self, user_id: str, top_k: int = 15) -> list[MatchedJob]:
         """ Get matching jobs using a user ID to fetch its embedding """
         print("\nSearching for matching jobs based on user ID...")
         cv_embedding = self.es_client.get_user_embedding(user_id)
@@ -44,24 +45,23 @@ class JobsMatcher:
     @staticmethod
     def print_results(results: dict):
         """Print formatted results"""
-        print("\nTop Matching Jobs:")
-        for idx, hit in enumerate(results['hits']['hits'], 1):
-            score = hit['_score']
-            job = hit['_source']
-            print(f"\n{idx}. {job['job_title']}")
-            print(f"   Job ID: {hit['_id']}")
-            # print(f"   Company: {job['company']}")
-            # print(f"   Location: {job['location']}")
-            # print(f"   Job URL: {job['job_url']}")
-            print(f"   Match Score: {score:.3f}")
-            # print(f"   Job Description: {job['description']}")
+        if not results:
+            print("No matching jobs found.")
+            return
+        
+        print(f"\nFound {len(results)} matching jobs:")
+        for job in results:
+            print(f"Job ID: {job.id}, Title: {job.job_title}, Company: {job.company}, Score: {job.score:.2f}")
 
 
 if __name__ == "__main__":
     matcher = JobsMatcher()
     try:
-        # results = matcher.get_matching_jobs_by_file(open("sample_data/example4.docx", "rb"))
-        results=matcher.get_matching_jobs_with_resume_id(user_id="A81eScgtsdbAKIhVzUtXclWk7A02", resume_id="882acad2-c5c5-48c3-85ca-6dfe64deddd8")
-        matcher.print_results(results)
+        # Example usage
+        with open("sample_data/electrician.docx", "rb") as file:
+            cv_stream = BytesIO(file.read())
+        
+        matching_jobs = matcher.get_matching_jobs_by_file(cv_stream, top_k=10)
+        matcher.print_results(matching_jobs)
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"An error occurred: {e}")

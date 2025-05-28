@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from ..clients.es_client import ElasticsearchClient
 import asyncio
 
-class JobApplyStorageHandler:
+class AppliedJobsManager:
     def __init__(self):
         self.es = ElasticsearchClient()
     
@@ -12,7 +12,6 @@ class JobApplyStorageHandler:
             "user_id": user_id,
             "job_id": job_id,
             "applied_date": datetime.now(timezone.utc).isoformat(),
-            "status": "active"
         }
         return self.es.index_applied_job(document)
     
@@ -28,26 +27,15 @@ class JobApplyStorageHandler:
 
 
 async def main():
-    handler = JobApplyStorageHandler()
-    # app1 = await handler.save_application("user1", "job_1")
-    # print(app1)
-    # app2 = await handler.save_application("user1", "job_5")
-    # print(app2)
-    # app3 = await handler.save_application("user1", "job_11")
-    # print(app3)
-    # app4 = await handler.save_application("user2", "job_3")
-    # print(app4)
-    # app5 = await handler.save_application("user2", "job_7")
-    # print(app5)
-
-    #wait for the index to be updated
-    await asyncio.sleep(3)
-    print("Applications for user1:")
-    final1 = await handler.get_enriched_applications("user1")
-    print(final1)
-    print("Applications for user2:")
-    final2 = await handler.get_enriched_applications("user2")
-    print(final2)
+    handler = AppliedJobsManager()
+    user_id = "A81eScgtsdbAKIhVzUtXclWk7A02"
+    job_id = "jobs_matcher_1"
+    # Save an application
+    response = await handler.save_application(user_id, job_id)
+    print(f"Application saved: {response}")
+    # Get enriched applications
+    applications = await handler.get_enriched_applications(user_id)
+    print(f"Enriched applications: {applications}")
 
 if __name__ == "__main__":
     asyncio.run(main())

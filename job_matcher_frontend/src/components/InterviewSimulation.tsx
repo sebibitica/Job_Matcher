@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/InterviewSimulation.css';
 import deleteIcon from '../assets/delete.svg';
 import { format, parseISO } from 'date-fns';
+import ReactMarkdown from 'react-markdown';
 
 interface Interview {
   id: string;
@@ -28,6 +29,7 @@ const InterviewSimulation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isLoadingInterviews, setIsLoadingInterviews] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +48,7 @@ const InterviewSimulation = () => {
   useEffect(() => {
     const loadInterviews = async () => {
       try {
+        setIsLoadingInterviews(true);
         const token = await user?.getIdToken();
         const response = await axios.get('http://127.0.0.1:8000/interviews/user_interviews', {
           headers: { Authorization: `Bearer ${token}` }
@@ -70,6 +73,8 @@ const InterviewSimulation = () => {
           }
       } catch (error) {
         console.error('Error loading interviews:', error);
+      } finally {
+        setIsLoadingInterviews(false);
       }
     };
     loadInterviews();
@@ -185,12 +190,18 @@ const InterviewSimulation = () => {
                     handleDeleteInterview(interview.id);
                   }}
                 >
-                  <img src={deleteIcon} alt="Delete" style={{width : "20px", height: "20px"}}/>
+                  <img src={deleteIcon} alt="Delete"/>
                 </button>
               </div>
               <span>{formatDate(interview.last_updated)}</span>
             </div>
           ))}
+          { interviews.length === 0 && !isLoadingInterviews && (
+            <>
+              <h4>No interviews started yet</h4>
+              <p>Start a new interview by going to a job posting and clicking Practice Interview</p>
+            </>
+            )}
         </div>
       </div>
 
@@ -199,9 +210,15 @@ const InterviewSimulation = () => {
         {selectedInterviewId ? (
           <>
             <div className="chat-messages">
-                {messages.map((message, index) => (
+                {messages.slice(2).map((message, index) => (
                     <div key={index} className={`message ${message.role}`}>
-                    <div className="message-content">{message.content}</div>
+                    <div className="message-content">
+                      {message.role === 'assistant' ? (
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      ) : (
+                        message.content
+                      )}
+                    </div>
                     </div>
                 ))}
                 {isLoading && (
@@ -236,7 +253,7 @@ const InterviewSimulation = () => {
           </>
         ) : (
           <div className="chat-placeholder">
-            <p>Select an interview from the sidebar or start a new one</p>
+            <p>Select an interview from the History bar or start a new one</p>
           </div>
         )}
       </div>

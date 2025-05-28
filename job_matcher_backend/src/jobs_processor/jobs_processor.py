@@ -1,13 +1,12 @@
 import time
 import logging
-from typing import Optional
 
-from src.clients.openai_embedding_client import OpenAIEmbeddingClient
-from src.clients.es_client import ElasticsearchClient
+from ..clients.openai_embedding_client import OpenAIEmbeddingClient
+from ..clients.es_client import ElasticsearchClient
 from .utils import get_latest_job_id, process_job, generate_job_id, fetch_new_jobs_from_department
 
 logging.basicConfig(level=logging.INFO)
-MAX_INITIAL_JOBS = 100
+MAX_INITIAL_JOBS = 150
 SLEEP_TIME = 1
 DEPARTMENT_ID = 57
 
@@ -66,7 +65,7 @@ def process_and_index_new_jobs():
     logging.info(f"✅ Updated metadata: last_ejobs_indexed_id = {newest_scraped_id}")
 
 
-def process_and_index_jobs_from_department_incremental():
+def process_and_index_jobs_from_department():
     embedding_client = OpenAIEmbeddingClient()
     es_client = ElasticsearchClient()
 
@@ -78,7 +77,7 @@ def process_and_index_jobs_from_department_incremental():
         logging.warning("⚠️ No last_ejobs_dept57_indexed_id found. Fetching last 100 jobs.")
         last_indexed_id = 0  # treat as no last ID, so fetch last 100 jobs
 
-    jobs = fetch_new_jobs_from_department(DEPARTMENT_ID, last_indexed_id, max_jobs=100)
+    jobs = fetch_new_jobs_from_department(DEPARTMENT_ID, last_indexed_id, max_jobs=300)
     logging.info(f"Total new jobs fetched for department {DEPARTMENT_ID}: {len(jobs)}")
 
     if not jobs:
@@ -120,5 +119,5 @@ def process_and_index_jobs_from_department_incremental():
 
 
 if __name__ == "__main__":
-    # process_and_index_new_jobs()
-    process_and_index_jobs_from_department_incremental()
+    #process_and_index_new_jobs()
+    process_and_index_jobs_from_department()

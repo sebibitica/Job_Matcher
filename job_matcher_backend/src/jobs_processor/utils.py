@@ -5,9 +5,13 @@ import re
 import json
 from typing import List, Dict, Optional
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 GOOGLE_GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
-GOOGLE_MAPS_API_KEY = ""
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 API_BASE = "https://api.ejobs.ro/jobs"
 HEADERS = {
@@ -89,7 +93,7 @@ def process_job(job_id: int) -> Optional[Dict]:
         response = session.get(f"{API_BASE}/{job_id}")
         
         if response.status_code == 404:
-            logging.info(f"Job {job_id} not found (404)")
+            logging.info(f"❌ Job {job_id} not found (404)")
             return None
         response.raise_for_status()
 
@@ -100,12 +104,12 @@ def process_job(job_id: int) -> Optional[Dict]:
         if expiration_date := job_data.get("expirationDate"):
             exp_date = datetime.strptime(expiration_date, "%Y-%m-%d")
             if exp_date < datetime.today():
-                logging.info(f"Job {job_id} expired on {expiration_date}")
+                logging.info(f"❌ Job {job_id} expired on {expiration_date}")
                 return None
         
         # Skip inactive jobs
         if job_data.get("jobType") == "inactive":
-            logging.info(f"Skipping inactive job {job_id}")
+            logging.info(f"❌ Skipping inactive job {job_id}")
             return None
         
         # Process description
@@ -119,6 +123,7 @@ def process_job(job_id: int) -> Optional[Dict]:
 
         if not has_description:
             # Skip this job entirely
+            logging.info(f"❌ Job {job_id} has no meaningful description")
             return None
         
         # Clean and extract descriptions
@@ -151,10 +156,11 @@ def process_job(job_id: int) -> Optional[Dict]:
             "job_url": f"https://www.ejobs.ro/user/locuri-de-munca/{job_data.get('slug')}/{job_id}",
             "expiration_date": expiration_date,
             "meta_tags": meta_tags,
+            "date_uploaded": job_data.get("creationDate"),
         }
         
     except Exception as e:
-        logging.error(f"Error processing job {job_id}: {str(e)}")
+        logging.error(f"❌ Error processing job {job_id}: {str(e)}")
         return None
     
 

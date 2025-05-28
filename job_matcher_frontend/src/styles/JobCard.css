@@ -58,6 +58,21 @@
     opacity: 0.6;
     transition: opacity 0.2s ease;
   }
+
+  .new-badge {
+    position: absolute;
+    top: -10px;
+    left: 5px;
+    background: #ff5252;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.85rem;
+    padding: 0.3em 0.8em;
+    border-radius: 16px;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    letter-spacing: 1px;
+  }
   
   .delete-btn:hover {
     opacity: 1;

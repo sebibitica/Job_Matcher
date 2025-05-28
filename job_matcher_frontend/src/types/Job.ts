@@ -8,6 +8,7 @@ export interface BaseJob {
     job_title: string;
     company: string;
     location: JobLocation;
+    date_uploaded: string;
 }
 
 export interface MatchedJob extends BaseJob {

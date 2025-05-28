@@ -1,7 +1,6 @@
 import json
 from google.cloud.firestore_v1.async_client import AsyncClient
 from google.oauth2 import service_account
-from datetime import datetime
 
 class FirestoreClient:
     def __init__(self, credentials_path: str = "./firebaseCredentials.json"):

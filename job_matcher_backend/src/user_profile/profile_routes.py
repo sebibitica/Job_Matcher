@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Request
 from fastapi.responses import JSONResponse
 from .profile_manager import ProfileManager
-from ..firebase.verify_token import get_current_user
+from ..clients.firebase.verify_token import get_current_user
 
 from io import BytesIO
 

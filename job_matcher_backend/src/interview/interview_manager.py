@@ -1,12 +1,12 @@
-# interview_manager.py
 from openai import AsyncOpenAI
 import os
 from dotenv import load_dotenv
-from ..firestore.interviews import InterviewsManager
+from ..clients.firestore.interviews_firestore import InterviewsManager
+
 
 load_dotenv()
-client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 interviews_manager = InterviewsManager()
 
 SYSTEM_PROMPT = {

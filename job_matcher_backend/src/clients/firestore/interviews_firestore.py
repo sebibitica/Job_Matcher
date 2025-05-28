@@ -1,4 +1,3 @@
-# interviews_firestore.py
 from datetime import datetime
 import uuid
 from .firestore_client import FirestoreClient
@@ -33,12 +32,9 @@ class InterviewsManager(FirestoreClient):
                     .collection("interviews").document(interview_id)
         
         doc = await doc_ref.get()
-        # remove first 2 messages
-        # as they are system prompts
         if doc.exists:
             messages = doc.to_dict().get("messages", [])
-            # Remove the first two messages
-            return messages[2:] if len(messages) > 2 else []
+            return messages
 
     async def get_user_interviews(self, user_id: str) -> list:
         """Get all interviews for a user"""

@@ -1,8 +1,7 @@
-# interview_routes.py
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from .interview_manager import initiate_chat, continue_chat, get_interviews_for_user, load_interview_messages, delete_interview
-from ..firebase.verify_token import get_current_user
+from ..clients.firebase.verify_token import get_current_user
 from pydantic import BaseModel
 
 class InitiateInterviewRequest(BaseModel):
