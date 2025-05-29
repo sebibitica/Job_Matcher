@@ -3,7 +3,7 @@ import logging
 
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..clients.es_client import ElasticsearchClient
-from .utils import get_latest_job_id, process_job, generate_job_id, fetch_new_jobs_from_department
+from .utils import get_latest_job_id, process_job, generate_job_id, fetch_new_jobs_from_department, clean_html_for_embedding
 
 logging.basicConfig(level=logging.INFO)
 MAX_INITIAL_JOBS = 150
@@ -26,7 +26,7 @@ def process_and_index_new_jobs():
         return
     
     if last_indexed_id is None:
-        logging.warning("⚠️ No last_ejobs_indexed_id found. Will process last 100 jobs.")
+        logging.warning(f"⚠️ No last_ejobs_indexed_id found. Will process last {MAX_INITIAL_JOBS} jobs.")
         last_indexed_id = max(0, latest_job_id - MAX_INITIAL_JOBS)
 
     logging.info(f"Scraping jobs from ID {latest_job_id} down to {last_indexed_id + 1}")
@@ -42,7 +42,8 @@ def process_and_index_new_jobs():
 
         try:
             # 3. Add embedding
-            embedding_input = f"{job['job_title']}\n{job['description']}\n{job['meta_tags']}"
+            embedding_description = clean_html_for_embedding(job["description"])
+            embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
             embedding_response = embedding_client.create(embedding_input)
             job["embedding"] = embedding_response.data[0].embedding
 
@@ -74,7 +75,7 @@ def process_and_index_jobs_from_department():
     last_indexed_id = metadata.get("value")
 
     if last_indexed_id is None:
-        logging.warning("⚠️ No last_ejobs_dept57_indexed_id found. Fetching last 100 jobs.")
+        logging.warning("⚠️ No last_ejobs_dept57_indexed_id found. Fetching last 300 jobs.")
         last_indexed_id = 0  # treat as no last ID, so fetch last 100 jobs
 
     jobs = fetch_new_jobs_from_department(DEPARTMENT_ID, last_indexed_id, max_jobs=300)
@@ -96,7 +97,8 @@ def process_and_index_jobs_from_department():
             continue
 
         try:
-            embedding_input = f"{job['job_title']}\n{job['description']}"
+            embedding_description = clean_html_for_embedding(job["description"])
+            embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
             embedding_response = embedding_client.create(embedding_input)
             job["embedding"] = embedding_response.data[0].embedding
 
@@ -119,5 +121,5 @@ def process_and_index_jobs_from_department():
 
 
 if __name__ == "__main__":
-    #process_and_index_new_jobs()
+    # process_and_index_new_jobs()
     process_and_index_jobs_from_department()

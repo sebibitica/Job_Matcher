@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { AppliedJob } from '../types/Job';
 import axios from 'axios';
 import JobList from './JobList';
+import { API_URL } from '../config/config';
 
 const AppliedJobsPage = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ const AppliedJobsPage = () => {
       
       try {
         const token = await user.getIdToken();
-        const response = await axios.get('http://127.0.0.1:8000/applied_jobs', {
+        const response = await axios.get(`${API_URL}/applied_jobs`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         

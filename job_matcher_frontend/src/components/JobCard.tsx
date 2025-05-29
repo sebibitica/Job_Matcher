@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import deleteIcon from '../assets/delete.svg';
 import '../styles/JobCard.css';
+import { API_URL } from '../config/config';
 
 interface JobCardProps {
   job: MatchedJob | AppliedJob;
@@ -28,7 +29,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
 
     try {
       const token = await user.getIdToken();
-      await axios.delete(`http://127.0.0.1:8000/applied_jobs/${job.application_id}`, {
+      await axios.delete(`${API_URL}/applied_jobs/${job.application_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -69,7 +70,14 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
       ) : null}
       <h3>{job.job_title}</h3>
       <p className="company">{job.company}</p>
-      <p className="location">{job.location.city}, {job.location.country}</p>
+      {job.location.country !== "Unknown" && (
+        <p className="location">
+          {job.location.city !== "Unknown" 
+            ? `${job.location.city}, ${job.location.country}`
+            : job.location.country
+          }
+        </p>
+      )}
       {'applied_date' in job && (
         <p className="applied-date">Applied on: {formatDate(job.applied_date)}</p>
       )}

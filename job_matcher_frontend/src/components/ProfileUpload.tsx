@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import cvIcon from '../assets/cv.svg';
 import '../styles/Profile.css';
+import { API_URL } from '../config/config';
 
 const ProfileUpload = ({ onComplete, onBack }: { onComplete: () => void; onBack: () => void }) => {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ const ProfileUpload = ({ onComplete, onBack }: { onComplete: () => void; onBack:
 
       const token = await user.getIdToken();
       await axios.post(
-        'http://127.0.0.1:8000/set_user_profile_by_file',
+        `${API_URL}/set_user_profile_by_file`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

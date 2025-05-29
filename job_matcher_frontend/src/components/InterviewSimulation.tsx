@@ -6,6 +6,7 @@ import '../styles/InterviewSimulation.css';
 import deleteIcon from '../assets/delete.svg';
 import { format, parseISO } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
+import { API_URL } from '../config/config';
 
 interface Interview {
   id: string;
@@ -50,7 +51,7 @@ const InterviewSimulation = () => {
       try {
         setIsLoadingInterviews(true);
         const token = await user?.getIdToken();
-        const response = await axios.get('http://127.0.0.1:8000/interviews/user_interviews', {
+        const response = await axios.get(`${API_URL}/interviews/user_interviews`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -87,7 +88,7 @@ const InterviewSimulation = () => {
       try {
         const token = await user?.getIdToken();
         const response = await axios.get(
-          `http://127.0.0.1:8000/interviews/messages/${selectedInterviewId}`,
+          `${API_URL}/interviews/messages/${selectedInterviewId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setMessages(response.data.messages);
@@ -119,7 +120,7 @@ const InterviewSimulation = () => {
       setIsLoading(true);
       const token = await user?.getIdToken();
       const response = await axios.post(
-        `http://127.0.0.1:8000/interviews/continue/${selectedInterviewId}`,
+        `${API_URL}/interviews/continue/${selectedInterviewId}`,
         { user_message: userMessage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -143,7 +144,7 @@ const InterviewSimulation = () => {
     try {
       const token = await user?.getIdToken();
       await axios.delete(
-        `http://127.0.0.1:8000/interviews/delete/${interviewId}`,
+        `${API_URL}/interviews/delete/${interviewId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setInterviews(prev => prev.filter(i => i.id !== interviewId));

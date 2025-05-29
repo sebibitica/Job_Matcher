@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useSearchParams} from 'react-router-dom';
 import { useRef } from 'react';
 import filterIcon from '../assets/filter.svg';
+import { API_URL } from '../config/config.ts';
 
 interface HomePageProps {
   file: File | null;
@@ -47,8 +48,9 @@ const HomePage = ({
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get<string[]>('http://localhost:8000/get_countries');
-        setCountries(response.data);
+        const response = await axios.get<string[]>(`${API_URL}/get_countries`);
+        const filteredCountries = response.data.filter(country => country !== "Unknown");
+        setCountries(filteredCountries);
       } catch (error) {
         console.error('Failed to fetch countries:', error);
       }
@@ -64,10 +66,11 @@ const HomePage = ({
     }
     const fetchCities = async () => {
       try {
-        const response = await axios.get<string[]>('http://localhost:8000/get_cities', {
+        const response = await axios.get<string[]>(`${API_URL}/get_cities`, {
           params: { country: selectedCountry },
         });
-        setCities(response.data);
+        const filteredCities = response.data.filter(city => city !== "Unknown");
+        setCities(filteredCities);
       } catch (error) {
         console.error('Failed to fetch cities:', error);
         setCities([]);
@@ -101,7 +104,7 @@ const HomePage = ({
         };
 
         const response = await axios.post<MatchedJob[]>(
-          'http://localhost:8000/job_search',
+          `${API_URL}/job_search`,
           payload,
           {
             headers: {

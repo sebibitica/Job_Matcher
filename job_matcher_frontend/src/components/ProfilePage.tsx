@@ -6,6 +6,7 @@ import ProfileManual from './ProfileManual.tsx';
 import '../styles/Profile.css';
 import cvIcon from '../assets/cv.svg';
 import manualIcon from '../assets/manual.svg';
+import { API_URL } from '../config/config.ts';
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ const ProfilePage = () => {
 
   const loadProfileStatus = async () => {
     const token = await user?.getIdToken();
-    const res = await axios.get('http://127.0.0.1:8000/is_user_profile', {
+    const res = await axios.get(`${API_URL}/is_user_profile`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

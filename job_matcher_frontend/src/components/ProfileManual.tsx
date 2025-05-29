@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import { API_URL } from '../config/config';
 
 const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack: () => void }) => {
   const { user } = useAuth();
@@ -30,7 +31,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
 
     try {
       await axios.post(
-        'http://127.0.0.1:8000/set_user_profile_by_text',
+        `${API_URL}/set_user_profile_by_text`,
         { profile_data },
         { headers: { Authorization: `Bearer ${token}` } }
       );

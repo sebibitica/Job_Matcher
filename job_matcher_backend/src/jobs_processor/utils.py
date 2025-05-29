@@ -7,6 +7,8 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+import html
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -26,18 +28,22 @@ HEADERS = {
 session = requests.Session()
 session.headers.update(HEADERS)
 
-def clean_html(text: str) -> str:
-    """Remove HTML tags and excess whitespace."""
-    try:
-        text = re.sub(r"/[^\s]+\.png", "", text)
-        text = re.sub(r"http\S+|www\S+", "", text)
-        text = re.sub(r"<[^>]+>", " ", text)
-        text = re.sub(r"\s+", " ", text).strip()
-        return text
-    except Exception as e:
-        logging.error(f"Error cleaning HTML: {e}")
-        return text
+def clean_html_for_embedding(html_text: str) -> str:
+    soup = BeautifulSoup(html_text, "html.parser")
+    
+    # Get plain text
+    text = soup.get_text()
+    
+    # Normalize lines: strip and remove empty lines
+    lines = [line.strip() for line in text.splitlines()]
+    lines = [line for line in lines if line]
+    
+    cleaned_text = "\n".join(lines)
+    
+    return cleaned_text
 
+def clean_html(raw_text):
+    return html.unescape(raw_text).strip()
 
 def get_location_from_coords(lat: float, lng: float) -> dict:
     """Return a dict with city and country based on lat/lng."""
@@ -131,6 +137,19 @@ def process_job(job_id: int) -> Optional[Dict]:
         company_description = clean_html(details.get("companyDescription", ""))
         ideal_candidate = clean_html(details.get("idealCandidate", ""))
 
+        desc_parts = []
+
+        if ideal_candidate:
+            desc_parts.append(f"<strong>Ideal Candidate:</strong><br/>{ideal_candidate}")
+
+        if job_description:
+            desc_parts.append(f"<strong>Job Description:</strong><br/>{job_description}")
+
+        if company_description:
+            desc_parts.append(f"<strong>Company Description:</strong><br/>{company_description}")
+
+        description = "<br/><br/>".join(desc_parts).strip()
+
         meta_tags = details.get("metaTags")
         if meta_tags:
             meta_tags = meta_tags.strip()
@@ -152,7 +171,7 @@ def process_job(job_id: int) -> Optional[Dict]:
             "job_title": job_data.get("title"),
             "company": job_data.get("company", {}).get("name"),
             "location": location,
-            "description": f"{ideal_candidate}\n{job_description}\n{company_description}".strip(),
+            "description": description,
             "job_url": f"https://www.ejobs.ro/user/locuri-de-munca/{job_data.get('slug')}/{job_id}",
             "expiration_date": expiration_date,
             "meta_tags": meta_tags,

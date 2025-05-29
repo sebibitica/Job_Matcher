@@ -14,6 +14,7 @@ import axios from 'axios';
 import ProtectedRoute from './components/ProtectedRoute';
 import InterviewSimulation from './components/InterviewSimulation';
 import ProfilePage from './components/ProfilePage';
+import { API_URL } from './config/config';
 
 const App = () => {
   const [jobs, setJobs] = useState<MatchedJob[]>([]);
@@ -45,7 +46,7 @@ const App = () => {
     
         // Check if user has completed their profile
         const profileStatusRes = await axios.get(
-          'http://127.0.0.1:8000/is_user_profile',
+          `${API_URL}/is_user_profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
     
@@ -56,7 +57,7 @@ const App = () => {
     
         // Fetch job matches using completed profile
         const jobsRes = await axios.get(
-          'http://127.0.0.1:8000/get_job_matches_by_profile',
+          `${API_URL}/get_job_matches_by_profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
     
@@ -84,7 +85,7 @@ const App = () => {
       formData.append('file', file);
 
       const response = await axios.post(
-        'http://127.0.0.1:8000/get_job_matches_logged_out',
+        `${API_URL}/get_job_matches_logged_out`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

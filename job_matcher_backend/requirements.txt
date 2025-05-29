@@ -1,10 +1,13 @@
 pdfservices-sdk==4.0.0
 openai
 docx2txt
-elasticsearch
+elasticsearch==8.17.1
 python-dotenv
 fastapi
 uvicorn
 google-cloud-firestore
 pydantic
 numpy
+beautifulsoup4
+firebase_admin
+python-multipart

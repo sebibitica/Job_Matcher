@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+job_matcher_diagram.png

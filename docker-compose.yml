@@ -1,0 +1,64 @@
+services:
+  elasticsearch:
+    image: elasticsearch:8.17.1
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data/
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - app-network
+  
+  kibana:
+    image: kibana:8.17.1
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - app-network
+    depends_on:
+      - elasticsearch
+
+  backend:
+    build: 
+      context: ./job_matcher_backend
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file:
+      - ./job_matcher_backend/.env
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "8000:8000"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+    
+  frontend:
+    build:
+      context: ./job_matcher_frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  es_data:
+    name: job_matcher_backend_es_data
+    external: true

@@ -17,7 +17,6 @@ class JobsMatcher:
 
     def find_matching_jobs(self, cv_embedding, top_k: int = 15, exclude_job_ids: list = None) -> list[MatchedJob]:
         """ Find top K matching jobs based on the CV embedding """
-        print("\nSearching for matching jobs...")
         if not cv_embedding:
             raise ValueError("CV embedding not received for matching.")
         
@@ -30,7 +29,6 @@ class JobsMatcher:
     
     def get_matching_jobs_with_user_id(self, user_id: str, top_k: int = 15) -> list[MatchedJob]:
         """ Get matching jobs using a user ID to fetch its embedding """
-        print("\nSearching for matching jobs based on user ID...")
         cv_embedding = self.es_client.get_user_embedding(user_id)
         if not cv_embedding:
             raise ValueError("User embedding not found.")

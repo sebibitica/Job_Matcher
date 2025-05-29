@@ -5,6 +5,7 @@ import { FullJobDetails } from '../types/Job';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import '../styles/JobPage.css';
+import { API_URL } from '../config/config';
 
 const JobPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const JobPage: React.FC = () => {
 
       try {
         const token = await user.getIdToken();
-        const response = await axios.get(`http://127.0.0.1:8000/is_applied_job/${id}`, {
+        const response = await axios.get(`${API_URL}/is_applied_job/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('Is applied:', response.data);
@@ -40,7 +41,7 @@ const JobPage: React.FC = () => {
 
       try {
         const token = user ? await user.getIdToken() : null;
-        const response = await axios.get(`http://127.0.0.1:8000/jobs/${id}`, {
+        const response = await axios.get(`${API_URL}/jobs/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setJob(response.data.job);
@@ -59,7 +60,7 @@ const JobPage: React.FC = () => {
       const token = await user.getIdToken();
       if (!isApplied) {
         await axios.post(
-          `http://127.0.0.1:8000/apply_to_job/${job.id}`,
+          `${API_URL}/apply_to_job/${job.id}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -77,7 +78,7 @@ const JobPage: React.FC = () => {
       setIsStartingInterview(true);
       const token = await user.getIdToken();
       const response = await axios.post(
-        `http://127.0.0.1:8000/interviews/initiate/${job.id}`,
+        `${API_URL}/interviews/initiate/${job.id}`,
         {
           job_title: job.job_title,
           job_description: job.description
@@ -111,9 +112,14 @@ const JobPage: React.FC = () => {
       <div className="job-header">
         <h1>{job.job_title}</h1>
         <h2>{job.company}</h2>
-        <p className="location">
-          {job.location.city}, {job.location.country}
-        </p>
+        {job.location.country !== "Unknown" && (
+          <p className="location">
+            {job.location.city !== "Unknown" 
+              ? `${job.location.city}, ${job.location.country}`
+              : job.location.country
+            }
+          </p>
+        )}
         <div className="job-buttons">
           {user && (
             <>
