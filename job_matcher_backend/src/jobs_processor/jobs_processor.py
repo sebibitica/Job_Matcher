@@ -3,17 +3,20 @@ import logging
 
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..clients.es_client import ElasticsearchClient
+from ..preprocessor.preprocessor import TextPreprocessor
 from .utils import get_latest_job_id, process_job, generate_job_id, fetch_new_jobs_from_department, clean_html_for_embedding
 
 logging.basicConfig(level=logging.INFO)
-MAX_INITIAL_JOBS = 150
-SLEEP_TIME = 1
+MAX_INITIAL_JOBS = 100
+SLEEP_TIME = 0
 DEPARTMENT_ID = 57
+
+embedding_client = OpenAIEmbeddingClient()
+es_client = ElasticsearchClient()
+text_preprocessor = TextPreprocessor()
 
 
 def process_and_index_new_jobs():
-    embedding_client = OpenAIEmbeddingClient()
-    es_client = ElasticsearchClient()
 
     # 1. Get last indexed job ID from metadata
     metadata = es_client.get_metadata("last_ejobs_indexed_id")
@@ -41,10 +44,15 @@ def process_and_index_new_jobs():
             continue
 
         try:
-            # 3. Add embedding
+            # 3. Get job description and prepare for embedding
             embedding_description = clean_html_for_embedding(job["description"])
             embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
-            embedding_response = embedding_client.create(embedding_input)
+
+            # 4. Preprocess text for embedding efficiency
+            preprocessed_description = text_preprocessor.preprocess_job(embedding_input)
+
+            # 5. Create embedding
+            embedding_response = embedding_client.create(preprocessed_description)
             job["embedding"] = embedding_response.data[0].embedding
 
             job.pop("meta_tags", None)
@@ -67,8 +75,6 @@ def process_and_index_new_jobs():
 
 
 def process_and_index_jobs_from_department():
-    embedding_client = OpenAIEmbeddingClient()
-    es_client = ElasticsearchClient()
 
     # Get last indexed job ID for department 57
     metadata = es_client.get_metadata("last_ejobs_dept57_indexed_id")
@@ -99,7 +105,10 @@ def process_and_index_jobs_from_department():
         try:
             embedding_description = clean_html_for_embedding(job["description"])
             embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
-            embedding_response = embedding_client.create(embedding_input)
+
+            preprocessed_description = text_preprocessor.preprocess_job(embedding_input)
+
+            embedding_response = embedding_client.create(preprocessed_description)
             job["embedding"] = embedding_response.data[0].embedding
 
             job.pop("meta_tags", None)
@@ -121,5 +130,5 @@ def process_and_index_jobs_from_department():
 
 
 if __name__ == "__main__":
-    # process_and_index_new_jobs()
-    process_and_index_jobs_from_department()
+    process_and_index_new_jobs()
+    # process_and_index_jobs_from_department()

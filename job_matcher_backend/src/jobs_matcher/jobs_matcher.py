@@ -2,6 +2,7 @@ from io import BytesIO
 from ..clients.es_client import ElasticsearchClient
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..cv_processor.cv_processor import CVProcessor
+from ..preprocessor.preprocessor import TextPreprocessor
 from ..types.types import MatchedJob
 
 class JobsMatcher:
@@ -9,11 +10,11 @@ class JobsMatcher:
         """ Initialize the JobsMatcher with the CV byte stream """
         self.embedding_client = OpenAIEmbeddingClient()
         self.es_client = ElasticsearchClient()
+        self.preprocessor = TextPreprocessor()
 
     def process_cv(self, file_stream: BytesIO):
         """ Process the CV to generate its embedding """
-        cv_processor = CVProcessor(file_stream, self.embedding_client)
-        return cv_processor.process()
+        return CVProcessor.process_file(file_stream, self.preprocessor, self.embedding_client)
 
     def find_matching_jobs(self, cv_embedding, top_k: int = 15, exclude_job_ids: list = None) -> list[MatchedJob]:
         """ Find top K matching jobs based on the CV embedding """
