@@ -8,6 +8,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Toggle the mobile menu open/close
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };

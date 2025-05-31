@@ -5,13 +5,24 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN apt-get update && apt-get install -y cron
+
 # Copy application code
 COPY . .
+
+# Copy cron jobs file
+COPY cron_jobs.txt /etc/cron.d/cron_jobs
+RUN chmod 0644 /etc/cron.d/cron_jobs && crontab /etc/cron.d/cron_jobs
+
+# Create log file for cron jobs
+RUN touch /var/log/jobs_processor.log
 
 # expose application port
 EXPOSE 8000
 
 ENV PYTHONUNBUFFERED=1
 
-# start with uvicorn
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+RUN chmod +x /app/run_backend_with_env.sh
+
+# Start cron in the background, then run uvicorn
+CMD ["/app/run_backend_with_env.sh"]

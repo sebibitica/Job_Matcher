@@ -21,43 +21,38 @@ load_dotenv()
 adobe_client_id = os.getenv('ADOBE_PDF_SERVICES_CLIENT_ID')
 adobe_client_secret = os.getenv('ADOBE_PDF_SERVICES_CLIENT_SECRET')
 
-# logging.basicConfig(level=logging.INFO)
-
 
 class PDFExtractor:
+    """Extract text from a PDF file stream using Adobe PDF Services."""
     def __init__(self, file_stream: BytesIO):
         if not file_stream:
             raise ValueError("file_stream must be provided.")
         self.file_stream = file_stream
 
-        # Initial setup, create credentials instance
         credentials = ServicePrincipalCredentials(
             client_id=adobe_client_id,
             client_secret=adobe_client_secret
         )
 
-        # Create a PDF Services instance
         self.pdf_services = PDFServices(credentials=credentials)
 
 
     def extract_text(self) -> str:
+        """Extract and return text from the PDF file."""
         try:
-            # Open and read input PDF file
             input_stream = self.file_stream
 
-            # Create an asset from the input file and upload
             input_asset = self.pdf_services.upload(input_stream=input_stream, mime_type=PDFServicesMediaType.PDF)
 
-            # Create parameters for the job (specifying that we want text extracted)
             extract_pdf_params = ExtractPDFParams(
                 elements_to_extract=[ExtractElementType.TEXT],
             )
 
-            # Create and submit the PDF extraction job
             extract_pdf_job = ExtractPDFJob(input_asset=input_asset, extract_pdf_params=extract_pdf_params)
+            
             location = self.pdf_services.submit(extract_pdf_job)
 
-            # Get job result (ZIP file) as stream
+            # get job result (ZIP file) as stream
             pdf_services_response = self.pdf_services.get_job_result(location, ExtractPDFResult)
             result_asset: CloudAsset = pdf_services_response.get_result().get_resource()
             stream_asset: StreamAsset = self.pdf_services.get_content(result_asset)
@@ -70,10 +65,9 @@ class PDFExtractor:
             logging.exception(f'Exception encountered while executing operation: {e}')
             return ""
 
-    # Extract text from the structuredData.json inside the ZIP stream
     @staticmethod
     def extract_text_from_stream(zip_stream: bytes) -> str:
-        # Use in-memory bytes stream for handling the ZIP file
+        """Extract text from the structuredData.json inside the ZIP stream."""
         with zipfile.ZipFile(BytesIO(zip_stream), 'r') as zip_ref:
             for file_name in zip_ref.namelist():
                 if "structuredData.json" in file_name:
@@ -82,9 +76,9 @@ class PDFExtractor:
                         return PDFExtractor.extract_text_from_json(data)
         return "structuredData.json not found in the ZIP file."
 
-    # Extract text elements from the structuredData.json content
     @staticmethod
     def extract_text_from_json(data: dict) -> str:
+        """Extract text elements from the structuredData.json content."""
         extracted_text = []
         if 'elements' in data:
             for element in data['elements']:

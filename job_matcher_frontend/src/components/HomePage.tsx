@@ -45,6 +45,7 @@ const HomePage = ({
     setSearchTerm(searchQuery);
   }, [searchQuery]);
 
+  // Fetch available countries for location filter
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -58,6 +59,7 @@ const HomePage = ({
     fetchCountries();
   }, []);
 
+  // Fetch cities when a country is selected
   useEffect(() => {
     if (!selectedCountry) {
       setCities([]);
@@ -136,14 +138,12 @@ const HomePage = ({
         setSearchResults([]);
         setSearchParams({});
         setSelectedCountry('');
-        listenerAddedRef.current = false; // Reset so we can add again later
+        listenerAddedRef.current = false; 
         document.removeEventListener('mousedown', handleClickOutside);
-        // Clean up the event listener
       }
     };
   
     if ((searchTerm || selectedCountry) && !listenerAddedRef.current) {
-      // Add event listener only if search term is present
       document.addEventListener('mousedown', handleClickOutside);
       listenerAddedRef.current = true;
     }
@@ -151,6 +151,7 @@ const HomePage = ({
 
   return (
     <div className="homepage-container">
+    {/* Search and filter section for logged-in users */}
     {user && (
       <div className="search-section" ref={searchContainerRef}>
         <div className="search-bar-container">
@@ -173,7 +174,7 @@ const HomePage = ({
           >
             <img src={filterIcon} alt="Filter" className="filter-icon" />
           </button>
-
+          
           {showFilters && (
             <div className="filter-inline-container">
               <select
@@ -222,7 +223,8 @@ const HomePage = ({
     )}
 
       {(searchTerm || selectedCountry) && <div className="search-backdrop" />}
-
+      
+      {/* File upload for logged-out users */}
       {!user && (
           <FileUpload
             selectedFile={file}
@@ -258,12 +260,14 @@ const HomePage = ({
         </div>
       )}
 
+      {/* Show matched jobs for logged-in users */}
       {jobs.length > 0 && user && <> 
         <h2> Hi {user.displayName || ''}, </h2> 
         <h3>Your profile matches these jobs:</h3> 
         <JobList jobs={jobs}/> 
       </>}
 
+      {/* Show matched jobs for logged-out users */}
       {jobs.length > 0 && !user && (
         <>
           <h3>Your resume matches these jobs:</h3>

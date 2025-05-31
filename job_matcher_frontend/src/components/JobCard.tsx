@@ -24,7 +24,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete}) => {
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent the card's onClick from firing
+    e.stopPropagation();
     if (!user || !isApplied) return;
 
     try {

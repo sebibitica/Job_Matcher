@@ -11,6 +11,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
 
+  // Handle changes in experience, education, or skills arrays
   const handleArrayChange = (index: number, value: string, setter: any, array: string[]) => {
     const updated = [...array];
     updated[index] = value;
@@ -19,6 +20,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
 
   const addField = (setter: any, array: string[]) => setter([...array, '']);
 
+  // Submit the manual profile data to the backend
   const handleSubmit = async () => {
     const token = await user?.getIdToken();
     setSubmitting(true);
@@ -52,7 +54,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
       {experiences.map((exp, i) => (
         <textarea
           key={i}
-          placeholder={`Experience #${i + 1}`}
+          placeholder={`#${i + 1} "Job Title - Years Worked: Describe your role."`}
           value={exp}
           onChange={(e) => handleArrayChange(i, e.target.value, setExperiences, experiences)}
         />
@@ -63,7 +65,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
       {educations.map((edu, i) => (
         <textarea
           key={i}
-          placeholder={`Education #${i + 1}`}
+          placeholder={`#${i + 1}` + ' "Institution - Years Attended: Degree"'}
           value={edu}
           onChange={(e) => handleArrayChange(i, e.target.value, setEducations, educations)}
         />
@@ -90,7 +92,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
         {submitting ? (
             <>
             <span className="button-spinner" />
-            Submitting...
+            Processing...
             </>
         ) : (
             "Submit"

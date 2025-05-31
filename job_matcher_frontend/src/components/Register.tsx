@@ -1,4 +1,3 @@
-// src/pages/Register.tsx
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';

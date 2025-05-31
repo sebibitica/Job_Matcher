@@ -3,15 +3,16 @@ from io import BytesIO
 
 
 class DOCXExtractor:
+    """Extract text from a DOCX file stream."""
     def __init__(self, file_stream: BytesIO):
         if not file_stream:
             raise ValueError("file_stream must be provided.")
         self.file_stream = file_stream
 
     def extract_text(self) -> str:
+        """Extract and deduplicate text from the DOCX file."""
         text = docx2txt.process(self.file_stream)
 
-        # Remove duplicate lines
         lines = text.splitlines()
         unique_lines = []
         for line in lines:

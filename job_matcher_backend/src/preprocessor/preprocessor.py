@@ -1,6 +1,11 @@
 from ..clients.openai_gpt_client import OpenAIGPTClient
 
 class TextPreprocessor:
+    """
+    Standardize CVs and job descriptions using GPT.
+    Wrote the prompts in Romanian because in test cases it produced better results.
+    The text will be embedded later, so it doesn't need to be necessarily in english.
+    """
     def __init__(self):
         self.gpt_client = OpenAIGPTClient()
 

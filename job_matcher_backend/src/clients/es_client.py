@@ -11,6 +11,10 @@ import heapq
 load_dotenv()
 
 class ElasticsearchClient:
+    """
+    Client for interacting with Elasticsearch to manage user profiles, jobs, applications,
+    and perform job matching and search operations.
+    """
     def __init__(self):
         self.client = Elasticsearch(
             os.getenv('ELASTICSEARCH_URL'),
@@ -21,6 +25,7 @@ class ElasticsearchClient:
     # -------------------------------
 
     def index_user_profile(self, user_id: str, document: dict):
+        """Index or update a user profile document."""
         return self.client.index(
             index="user_profiles",
             id=user_id,
@@ -28,6 +33,7 @@ class ElasticsearchClient:
         )
     
     def search_user_profile(self, user_id: str):
+        """Retrieve a user profile by user ID."""
         if not user_id:
             return None
         try:
@@ -39,6 +45,7 @@ class ElasticsearchClient:
             raise RuntimeError(f"Error retrieving user profile: {str(e)}")
         
     def get_user_embedding(self, user_id: str):
+        """Get the embedding vector from a user's profile."""
         if not user_id:
             return None
         profile = self.search_user_profile(user_id)
@@ -52,6 +59,7 @@ class ElasticsearchClient:
     # -------------------------------
     
     def index_job(self, job_id, job_data):
+        """Index or update a job document."""
         return self.client.index(
             index="jobs",
             id=job_id,
@@ -59,6 +67,7 @@ class ElasticsearchClient:
         )
     
     def get_job(self, job_id: str)-> Optional[FullJob]:
+        """Retrieve a job by ID, excluding its embedding."""
         try:
             result = self.client.get(index="jobs", id=job_id, _source_excludes=["embedding"])
             result["_source"]["id"] = job_id
@@ -96,6 +105,7 @@ class ElasticsearchClient:
         return jobs
     
     def get_jobs_countries(self):
+        """Return a list of all distinct countries from job postings."""
         response = self.client.search(
             index="jobs",
             size=0,
@@ -112,6 +122,7 @@ class ElasticsearchClient:
         return countries
 
     def get_jobs_cities(self, country: str):
+        """Return a list of all distinct cities for a given country."""
         response = self.client.search(
             index="jobs",
             size=0,
@@ -134,6 +145,7 @@ class ElasticsearchClient:
     # -------------------------------
 
     def index_applied_job(self, document: dict):
+        """Index a new applied job for a user."""
         return self.client.index(
             index="user_applied_jobs",
             id=str(uuid.uuid4()),
@@ -141,6 +153,7 @@ class ElasticsearchClient:
         )
     
     def delete_applied_job(self, application_id: str, user_id: str):
+        """Delete an applied job if the user is authorized."""
         if not self.verify_application_ownership(application_id, user_id):
             raise ValueError("Not authorized to delete this application")
         return self.client.delete(
@@ -186,11 +199,12 @@ class ElasticsearchClient:
         )
     
     def verify_application_ownership(self, application_id: str, user_id: str):
+        """Check if a given application belongs to the user."""
         response = self.client.get(index="user_applied_jobs", id=application_id)
         return response['_source']['user_id'] == user_id
     
     def get_enriched_applications(self, user_id: str) -> list[AppliedJob]:
-        """Combined operation that returns active applications with job data"""
+        """Return user's applications with job data, removing stale applications."""
         applications = self.get_user_applications(user_id)
         apps = [{
             "application_id": hit["_id"],
@@ -200,7 +214,7 @@ class ElasticsearchClient:
         if not apps:
             return []
 
-        # Get current job data
+        # Get job data for all applications
         job_ids = [app["job_id"] for app in apps]
         job_list = self.get_jobs_batch(job_ids)
         job_map = {job.id: job for job in job_list}
@@ -210,6 +224,7 @@ class ElasticsearchClient:
         for app in apps:
             job = job_map.get(app["job_id"])
             if not job:
+                # If job is not found(it was deleted), delete the application
                 self.delete_applied_job(app["application_id"], user_id)
             else:
                 # Add job data to AppliedJob model result
@@ -228,6 +243,10 @@ class ElasticsearchClient:
     # -------------------------------
     
     def search_jobs_by_embedding(self, embedding, k=15, exclude_job_ids: list = None) -> list[MatchedJob]:
+        """
+        KNN Search for jobs most similar to a given user profile embedding,
+        excluding the jobs the user has already applied to.
+        """
         if exclude_job_ids:
             k=k+len(exclude_job_ids)
         
@@ -276,6 +295,10 @@ class ElasticsearchClient:
     #     Job Search handling
     # -------------------------------
     def search_jobs_by_keyword_with_similarity(self, request: SearchRequest, user_id: str) -> list[BaseJob]:
+        """
+        Search jobs by keyword and location,
+        ranking by similarity to user's embedding if available.
+        """
         must_clauses = []
         filter_clauses = []
 
@@ -322,7 +345,6 @@ class ElasticsearchClient:
             # No embedding: return keyword matches only
             return [BaseJob(id=hit["_id"], **hit["_source"]) for hit in hits[:15]]
 
-        # Cosine similarity ranking
         user_embedding_np = np.array(user_embedding)
         user_norm = np.linalg.norm(user_embedding_np)
 
@@ -330,6 +352,7 @@ class ElasticsearchClient:
             vec_np = np.array(vec)
             return np.dot(user_embedding_np, vec_np) / (user_norm * np.linalg.norm(vec_np) + 1e-10)
 
+        # use a heap to get the top 15 jobs based on cosine similarity
         top_hits = heapq.nlargest(
             15,
             hits,
@@ -347,15 +370,11 @@ class ElasticsearchClient:
     # ----------------------------------
 
     def get_metadata(self, doc_id: str, index: str = "scraper_metadata") -> dict:
+        """Retrieve webscraping metadata by document ID."""
         if self.client.exists(index=index, id=doc_id):
             return self.client.get(index=index, id=doc_id)["_source"]
         return {}
 
     def update_metadata(self, doc_id: str, data: dict, index: str = "scraper_metadata") -> None:
+        """Update or insert webscraping metadata."""
         self.client.index(index=index, id=doc_id, document=data)
-
-
-if __name__ == "__main__":
-    es = ElasticsearchClient()
-    test_response = es.search_jobs_by_embedding([0.0]*1536)  # Test with dummy embedding
-    print(test_response)

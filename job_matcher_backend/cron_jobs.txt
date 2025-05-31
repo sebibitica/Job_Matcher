@@ -1,0 +1,2 @@
+00 14 * * * cd /app && env -i $(cat /etc/container_environment | xargs) /usr/local/bin/python3 -m src.jobs_processor.jobs_processor_parallel --mode both >> /var/log/jobs_processor.log 2>&1
+00 15 * * * cd /app && env -i $(cat /etc/container_environment | xargs) /usr/local/bin/python3 -m src.jobs_processor.jobs_expired_removal >> /var/log/jobs_processor.log 2>&1

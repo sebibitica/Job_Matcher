@@ -53,7 +53,7 @@ const ProfileUpload = ({ onComplete, onBack }: { onComplete: () => void; onBack:
               {isUploading && (
                 <>
                   <span className="button-spinner" />
-                  Uploading...
+                  Processing...
                 </>)
               }
             </div>

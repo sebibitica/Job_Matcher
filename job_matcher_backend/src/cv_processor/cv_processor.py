@@ -7,6 +7,8 @@ from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..preprocessor.preprocessor import TextPreprocessor
 
 class CVProcessor:
+    """Process CV files to extract text, preprocess it and generate embeddings."""
+
     @staticmethod
     def process_file(file_stream: BytesIO, preprocessor: TextPreprocessor, 
                     embedding_client: OpenAIEmbeddingClient):
@@ -36,17 +38,14 @@ class CVProcessor:
 
     @staticmethod
     def _detect_file_type(file_stream: BytesIO):
-        """ Detect the file extension based on the bytes """
-        # Read the first few bytes to check the type of the file
+        """ Detect the file extension based on the first bytes """
         file_stream.seek(0)  
         file_signature = file_stream.read(4)
-
-        # Reset the stream position
         file_stream.seek(0)
         
-        if file_signature[:4] == b"%PDF":  # PDF
+        if file_signature[:4] == b"%PDF":
             return "pdf"
-        elif file_signature[:2] == b'PK':  # DOCX (ZIP format)
+        elif file_signature[:2] == b'PK':
             return "docx"
         else:
             raise ValueError("Unsupported file type")

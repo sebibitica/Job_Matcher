@@ -1,4 +1,3 @@
-// App.tsx
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
@@ -23,6 +22,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user , isLoading: authLoading} = useAuth();
 
+  // Fetch jobs when user is authenticated
   useEffect(() => {
     if(!authLoading){
       handleGetJobs();
@@ -37,6 +37,7 @@ const App = () => {
     return null;
   }
 
+  // Fetch job matches for logged-in users
   const handleGetJobs = async () => {
     if (user){
       try {
@@ -72,8 +73,8 @@ const App = () => {
     }
   };
 
+  // Fetch job matches for logged-out users using uploaded file
   const handleGetJobsLoggedOut = async () => {
-    // logged out -> get job matches using uploaded file
     try {
       setIsLoading(true);
       

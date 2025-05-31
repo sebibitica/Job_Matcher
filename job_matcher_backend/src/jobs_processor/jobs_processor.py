@@ -7,9 +7,10 @@ from ..preprocessor.preprocessor import TextPreprocessor
 from .utils import get_latest_job_id, process_job, generate_job_id, fetch_new_jobs_from_department, clean_html_for_embedding
 
 logging.basicConfig(level=logging.INFO)
+
 MAX_INITIAL_JOBS = 100
 SLEEP_TIME = 0
-DEPARTMENT_ID = 57
+DEPARTMENT_ID = 57 # IT department at ejobs.ro
 
 embedding_client = OpenAIEmbeddingClient()
 es_client = ElasticsearchClient()
@@ -17,12 +18,13 @@ text_preprocessor = TextPreprocessor()
 
 
 def process_and_index_new_jobs():
-
-    # 1. Get last indexed job ID from metadata
+    """Process and index new jobs from ejobs.ro into Elasticsearch."""
+    
+    # Get last indexed job ID from metadata
     metadata = es_client.get_metadata("last_ejobs_indexed_id")
     last_indexed_id = metadata.get("value")
 
-    # 2. Get the latest job ID from ejobs
+    # Get the latest job ID posted from ejobs
     latest_job_id = get_latest_job_id()
     if not latest_job_id:
         logging.error("❌ Failed to fetch latest job ID from ejobs.ro")
@@ -31,6 +33,11 @@ def process_and_index_new_jobs():
     if last_indexed_id is None:
         logging.warning(f"⚠️ No last_ejobs_indexed_id found. Will process last {MAX_INITIAL_JOBS} jobs.")
         last_indexed_id = max(0, latest_job_id - MAX_INITIAL_JOBS)
+    elif last_indexed_id >= latest_job_id:
+        logging.info(
+            f"✅ No new jobs to process. Last indexed job ID {last_indexed_id} is up to date."
+        )
+        return
 
     logging.info(f"Scraping jobs from ID {latest_job_id} down to {last_indexed_id + 1}")
     newest_scraped_id = latest_job_id
@@ -44,23 +51,18 @@ def process_and_index_new_jobs():
             continue
 
         try:
-            # 3. Get job description and prepare for embedding
             embedding_description = clean_html_for_embedding(job["description"])
             embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
 
-            # 4. Preprocess text for embedding efficiency
             preprocessed_description = text_preprocessor.preprocess_job(embedding_input)
 
-            # 5. Create embedding
             embedding_response = embedding_client.create(preprocessed_description)
             job["embedding"] = embedding_response.data[0].embedding
 
             job.pop("meta_tags", None)
 
-            # 6. Generate document _id
             doc_id = generate_job_id(job)
 
-            # 7. Save to Elasticsearch
             es_client.index_job(doc_id, job)
             logging.info(f"✅ Indexed job {job['site_id']} | {job['job_title']}")
 
@@ -69,20 +71,21 @@ def process_and_index_new_jobs():
         except Exception as e:
             logging.error(f"❌ Failed to process/index job {job.get('site_id')}: {e}")
 
-    # 8. Save newest job ID from this session into metadata
+    # save newest job ID from this session into metadata
     es_client.update_metadata("last_ejobs_indexed_id", {"value": newest_scraped_id})
     logging.info(f"✅ Updated metadata: last_ejobs_indexed_id = {newest_scraped_id}")
 
 
 def process_and_index_jobs_from_department():
-
+    """Process and index new jobs from a specific department."""
+    
     # Get last indexed job ID for department 57
     metadata = es_client.get_metadata("last_ejobs_dept57_indexed_id")
     last_indexed_id = metadata.get("value")
 
     if last_indexed_id is None:
         logging.warning("⚠️ No last_ejobs_dept57_indexed_id found. Fetching last 300 jobs.")
-        last_indexed_id = 0  # treat as no last ID, so fetch last 100 jobs
+        last_indexed_id = 0
 
     jobs = fetch_new_jobs_from_department(DEPARTMENT_ID, last_indexed_id, max_jobs=300)
     logging.info(f"Total new jobs fetched for department {DEPARTMENT_ID}: {len(jobs)}")
@@ -124,7 +127,6 @@ def process_and_index_jobs_from_department():
         except Exception as e:
             logging.error(f"❌ Failed to index job {job.get('site_id')}: {e}")
 
-    # Update the last indexed job ID in metadata
     es_client.update_metadata("last_ejobs_dept57_indexed_id", {"value": newest_job_id})
     logging.info(f"✅ Updated metadata: last_ejobs_dept57_indexed_id = {newest_job_id}")
 

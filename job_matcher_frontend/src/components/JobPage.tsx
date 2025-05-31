@@ -1,4 +1,3 @@
-// JobPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FullJobDetails } from '../types/Job';
@@ -132,7 +131,7 @@ const JobPage: React.FC = () => {
             <button 
               onClick={handleStartInterview}
               className="interview-button"
-              disabled={isStartingInterview} // Disable during loading
+              disabled={isStartingInterview}
             >
               {isStartingInterview ? 'Creating Interview...' : 'Practice Interview'}
             </button>

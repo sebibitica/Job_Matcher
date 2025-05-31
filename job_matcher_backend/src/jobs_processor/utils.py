@@ -1,7 +1,6 @@
 import requests
 import logging
 import hashlib
-import re
 import json
 from typing import List, Dict, Optional
 from datetime import datetime
@@ -29,12 +28,12 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 def clean_html_for_embedding(html_text: str) -> str:
+    """Clean HTML and return plain text for embedding."""
     soup = BeautifulSoup(html_text, "html.parser")
     
-    # Get plain text
     text = soup.get_text()
     
-    # Normalize lines: strip and remove empty lines
+    # Remove excessive whitespace and newlines
     lines = [line.strip() for line in text.splitlines()]
     lines = [line for line in lines if line]
     
@@ -43,6 +42,7 @@ def clean_html_for_embedding(html_text: str) -> str:
     return cleaned_text
 
 def clean_html(raw_text):
+    """Unescape and strip HTML entities from text."""
     return html.unescape(raw_text).strip()
 
 def get_location_from_coords(lat: float, lng: float) -> dict:
@@ -118,7 +118,6 @@ def process_job(job_id: int) -> Optional[Dict]:
             logging.info(f"❌ Skipping inactive job {job_id}")
             return None
         
-        # Process description
         details = job_data.get("details", {})
 
         # Check if any of the meaningful description fields exist and are non-empty
@@ -128,7 +127,6 @@ def process_job(job_id: int) -> Optional[Dict]:
         )
 
         if not has_description:
-            # Skip this job entirely
             logging.info(f"❌ Job {job_id} has no meaningful description")
             return None
         

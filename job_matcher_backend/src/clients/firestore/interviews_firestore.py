@@ -3,8 +3,12 @@ import uuid
 from .firestore_client import FirestoreClient
 
 class InterviewsManager(FirestoreClient):
+    """
+    Manages interview sessions for users in Firestore.
+    Provides methods to create, update, retrieve, and delete interviews.
+    """
     async def create_interview(self, user_id: str, job_id: str, job_title: str, messages: list) -> str:
-        """Create new interview and return unique interview_id"""
+        """Create a new interview and return unique interview_id"""
         interview_id = str(uuid.uuid4())
         doc_ref = self.client.collection("users").document(user_id)\
                     .collection("interviews").document(interview_id)
@@ -19,6 +23,7 @@ class InterviewsManager(FirestoreClient):
         return interview_id
 
     async def save_messages(self, user_id: str, interview_id: str, messages: list):
+        """Update the messages and last_updated timestamp for an interview."""
         doc_ref = self.client.collection("users").document(user_id)\
                     .collection("interviews").document(interview_id)
         
@@ -28,6 +33,7 @@ class InterviewsManager(FirestoreClient):
         })
 
     async def load_messages(self, user_id: str, interview_id: str) -> list:
+        """Retrieve the messages for a specific interview."""
         doc_ref = self.client.collection("users").document(user_id)\
                     .collection("interviews").document(interview_id)
         

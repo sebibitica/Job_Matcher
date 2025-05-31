@@ -13,8 +13,7 @@ const ProtectedRoute = () => {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-
-  // If user is logged in, render the requested component
+  
   return <Outlet />;
 };
 

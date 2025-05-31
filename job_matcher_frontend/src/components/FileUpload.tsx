@@ -2,7 +2,6 @@ import React from 'react';
 import cvIcon from '../assets/cv.svg';
 import '../styles/FileUpload.css';
 
-// FileUpload.tsx
 interface FileUploadProps {
   onFileChange: (file: File | null) => void;
   onGetJobs: () => void;

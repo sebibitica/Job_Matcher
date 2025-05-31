@@ -62,6 +62,7 @@ const InterviewSimulation = () => {
           )
         );
 
+        // If a new interview was just started, select it and show initial message
         if (location.state?.newInterviewId) {
             setSelectedInterviewId(location.state.newInterviewId);
             setMessages([{
@@ -81,6 +82,7 @@ const InterviewSimulation = () => {
     loadInterviews();
   }, [user, location, navigate]);
 
+  // Load messages for selected interview
   useEffect(() => {
     const loadMessages = async () => {
       if (!selectedInterviewId) return;

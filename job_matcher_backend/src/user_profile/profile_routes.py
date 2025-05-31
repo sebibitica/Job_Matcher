@@ -10,6 +10,7 @@ manager = ProfileManager()
 
 @router.get("/is_user_profile")
 async def get_user_profile(user_id: str = Depends(get_current_user)):
+    """Check if the current user has a profile."""
     profile = manager.get_user_profile(user_id)
     if not profile:
         return {"status": "incomplete"}
@@ -20,6 +21,7 @@ async def get_user_profile(user_id: str = Depends(get_current_user)):
 
 @router.post("/set_user_profile_by_file")
 async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = Depends(get_current_user)):
+    """Set user profile using a CV file upload."""
     try:
         file_extension = file.filename.split(".")[-1].lower()
         if file_extension not in ["docx", "pdf"]:
@@ -36,6 +38,7 @@ async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = 
 
 @router.post("/set_user_profile_by_text")
 async def set_user_profile_by_text(request: Request, user_id: str = Depends(get_current_user)):
+    """Set user profile using structured text data."""
     try:
         body = await request.json()
         print(body)

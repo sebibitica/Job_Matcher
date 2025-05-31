@@ -95,7 +95,7 @@
   color: #1e293b;
 }
 
-/* Back Button (top-left corner) */
+/* Back Button */
 .back-button-profile {
   position: absolute;
   top: -1rem;
@@ -204,7 +204,7 @@
 }
 
 .manual-submit-button {
-  background-color: #10b981; /* emerald green */
+  background-color: #10b981; 
   color: white;
   border: none;
   padding: 0.7rem 1.2rem;
@@ -219,7 +219,7 @@
 }
 
 .manual-submit-button:hover {
-  background-color: #059669; /* darker emerald */
+  background-color: #059669; 
 }
 
 .manual-submit-button:disabled {

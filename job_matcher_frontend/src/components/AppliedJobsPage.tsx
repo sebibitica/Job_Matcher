@@ -1,4 +1,3 @@
-// AppliedJobsPage.tsx
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { AppliedJob } from '../types/Job';
@@ -32,6 +31,7 @@ const AppliedJobsPage = () => {
     fetchAppliedJobs();
   }, [user]);
 
+  // Remove a job from the list after deletion
   const handleDelete = (jobId: string) => {
     setAppliedJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
   };

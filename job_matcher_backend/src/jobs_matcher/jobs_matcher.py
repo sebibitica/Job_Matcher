@@ -6,8 +6,8 @@ from ..preprocessor.preprocessor import TextPreprocessor
 from ..types.types import MatchedJob
 
 class JobsMatcher:
+    """ Match jobs based on CV embeddings using Elasticsearch KNN and OpenAI embeddings. """
     def __init__(self):
-        """ Initialize the JobsMatcher with the CV byte stream """
         self.embedding_client = OpenAIEmbeddingClient()
         self.es_client = ElasticsearchClient()
         self.preprocessor = TextPreprocessor()
@@ -56,7 +56,6 @@ class JobsMatcher:
 if __name__ == "__main__":
     matcher = JobsMatcher()
     try:
-        # Example usage
         with open("sample_data/electrician.docx", "rb") as file:
             cv_stream = BytesIO(file.read())
         

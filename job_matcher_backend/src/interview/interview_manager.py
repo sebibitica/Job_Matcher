@@ -27,6 +27,7 @@ SYSTEM_PROMPT = {
 }
 
 async def initiate_chat(user_id: str, job_id: str, job_title: str, job_description: str) -> dict:
+    """Start a new interview session and return the first AI response."""
     messages = [
         SYSTEM_PROMPT,
         {"role": "user", "content": job_description}
@@ -52,6 +53,7 @@ async def initiate_chat(user_id: str, job_id: str, job_title: str, job_descripti
     return {"interview_id": interview_id, "ai_response": ai_reply}
 
 async def continue_chat(user_id: str, interview_id: str, user_message: str) -> str:
+    """Continue an interview session with a new user message."""
     messages = await interviews_manager.load_messages(user_id, interview_id)
 
     if not messages:
@@ -73,9 +75,11 @@ async def continue_chat(user_id: str, interview_id: str, user_message: str) -> s
     return ai_reply
 
 async def get_interviews_for_user(user_id: str) -> list:
+    """Get all interviews for a user."""
     return await interviews_manager.get_user_interviews(user_id)
 
 async def load_interview_messages(user_id: str, interview_id: str) -> list:
+    """Load all messages for a specific interview."""
     return await interviews_manager.load_messages(user_id, interview_id)
 
 async def delete_interview(user_id: str, interview_id: str):

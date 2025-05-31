@@ -23,6 +23,7 @@ async def api_initiate_interview(
     request: InitiateInterviewRequest,
     user_id: str = Depends(get_current_user)
 ):
+    """Start a new interview session."""
     try:
         result = await initiate_chat(user_id, job_id, request.job_title, request.job_description)
         return JSONResponse(content={
@@ -39,6 +40,7 @@ async def api_continue_interview(
     request: ContinueInterviewRequest,
     user_id: str = Depends(get_current_user)
 ):
+    """Continue an interview session with a user message."""
     try:
         ai_response = await continue_chat(user_id, interview_id, request.user_message)
         return JSONResponse(content={
@@ -54,6 +56,7 @@ async def api_continue_interview(
 
 @router.get("/user_interviews")
 async def api_get_user_interviews(user_id: str = Depends(get_current_user)):
+    """Get all interviews for the current user."""
     try:
         interviews = await get_interviews_for_user(user_id)
         return JSONResponse(content={"interviews": interviews})
@@ -65,6 +68,7 @@ async def api_load_messages(
     interview_id: str,
     user_id: str = Depends(get_current_user)
 ):
+    """Load all messages for a specific interview."""
     try:
         messages = await load_interview_messages(user_id, interview_id)
         return JSONResponse(content={"messages": messages})
@@ -76,6 +80,7 @@ async def api_delete_interview(
     interview_id: str,
     user_id: str = Depends(get_current_user)
 ):
+    """Delete an interview and its messages."""
     try:
         success = await delete_interview(user_id, interview_id)
         if success:

@@ -1,6 +1,6 @@
-import time
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import argparse
 
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..clients.es_client import ElasticsearchClient
@@ -15,7 +15,6 @@ from .utils import (
 
 logging.basicConfig(level=logging.INFO)
 MAX_INITIAL_JOBS = 100
-SLEEP_TIME = 0
 DEPARTMENT_ID = 57
 MAX_WORKERS = 8
 
@@ -25,6 +24,7 @@ text_preprocessor = TextPreprocessor()
 
 
 def process_single_job(job_id):
+    """Process and index a single job by job ID."""
     job = process_job(job_id)
     if not job:
         return None, job_id
@@ -46,6 +46,7 @@ def process_single_job(job_id):
 
 
 def process_and_index_new_jobs():
+    """Process and index new jobs from ejobs.ro in parallel."""
     metadata = es_client.get_metadata("last_ejobs_indexed_id")
     last_indexed_id = metadata.get("value")
 
@@ -59,6 +60,11 @@ def process_and_index_new_jobs():
             f"⚠️ No last_ejobs_indexed_id found. Will process last {MAX_INITIAL_JOBS} jobs."
         )
         last_indexed_id = max(0, latest_job_id - MAX_INITIAL_JOBS)
+    elif last_indexed_id >= latest_job_id:
+        logging.info(
+            f"✅ No new jobs to process. Last indexed job ID {last_indexed_id} is up to date."
+        )
+        return
 
     logging.info(
         f"Scraping jobs from ID {latest_job_id} down to {last_indexed_id + 1}"
@@ -79,6 +85,7 @@ def process_and_index_new_jobs():
 
 
 def process_single_department_job(job_summary):
+    """Process and index a single job from a department."""
     job_id = job_summary["id"]
     job = process_job(job_id)
     if not job:
@@ -102,6 +109,7 @@ def process_single_department_job(job_summary):
 
 
 def process_and_index_jobs_from_department():
+    """Process and index new jobs from a specific department in parallel."""
     metadata = es_client.get_metadata("last_ejobs_dept57_indexed_id")
     last_indexed_id = metadata.get("value")
 
@@ -140,5 +148,19 @@ def process_and_index_jobs_from_department():
 
 
 if __name__ == "__main__":
-    # process_and_index_new_jobs()
-    process_and_index_jobs_from_department()
+    parser = argparse.ArgumentParser(description="Job processing options")
+    parser.add_argument(
+        "--mode",
+        choices=["all", "department", "both"],
+        default="all",
+        help="Which job processing to run: all (default), department, or both"
+    )
+    args = parser.parse_args()
+
+    if args.mode == "all":
+        process_and_index_new_jobs()
+    elif args.mode == "both":
+        process_and_index_new_jobs()
+        process_and_index_jobs_from_department()
+    elif args.mode == "department":
+        process_and_index_jobs_from_department()

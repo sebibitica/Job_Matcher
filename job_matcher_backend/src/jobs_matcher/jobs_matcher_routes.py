@@ -11,6 +11,7 @@ jobs_matcher = JobsMatcher()
 async def get_job_matches_by_profile(
     user_id: str = Depends(get_current_user)
 ):
+    """Get matching jobs for the current user's profile."""
     try:
         matched_jobs = jobs_matcher.get_matching_jobs_with_user_id(user_id)
         if not matched_jobs:
@@ -25,6 +26,7 @@ async def get_job_matches_by_profile(
 
 @router.post("/get_job_matches_logged_out")
 async def get_job_matches_by_file_upload(file: UploadFile = File(...)):
+    """Get matching jobs by uploading a CV file (for logged-out users)."""
     try:
         file_extension = file.filename.split(".")[-1].lower()
         file_bytes = BytesIO(await file.read())
