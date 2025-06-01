@@ -49,7 +49,7 @@ const HomePage = ({
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get<string[]>(`${API_URL}/get_countries`);
+        const response = await axios.get<string[]>(`${API_URL}/search_jobs/countries`);
         const filteredCountries = response.data.filter(country => country !== "Unknown");
         setCountries(filteredCountries);
       } catch (error) {
@@ -68,7 +68,7 @@ const HomePage = ({
     }
     const fetchCities = async () => {
       try {
-        const response = await axios.get<string[]>(`${API_URL}/get_cities`, {
+        const response = await axios.get<string[]>(`${API_URL}/search_jobs/cities`, {
           params: { country: selectedCountry },
         });
         const filteredCities = response.data.filter(city => city !== "Unknown");
@@ -106,7 +106,7 @@ const HomePage = ({
         };
 
         const response = await axios.post<MatchedJob[]>(
-          `${API_URL}/job_search`,
+          `${API_URL}/search_jobs`,
           payload,
           {
             headers: {

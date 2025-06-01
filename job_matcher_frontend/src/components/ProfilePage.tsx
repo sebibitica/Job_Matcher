@@ -17,7 +17,7 @@ const ProfilePage = () => {
 
   const loadProfileStatus = async () => {
     const token = await user?.getIdToken();
-    const res = await axios.get(`${API_URL}/is_user_profile`, {
+    const res = await axios.get(`${API_URL}/profile/is_complete`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

@@ -88,7 +88,7 @@ def get_latest_job_id() -> Optional[int]:
         decoded_data = response.content.decode("utf-8", errors="replace")
 
         latest_job = json.loads(decoded_data)["jobs"][0]
-        return latest_job["id"]
+        return latest_job["id"], latest_job.get("creationDate")
     except Exception as e:
         logging.error(f"Failed to get latest job ID: {str(e)}")
         return None
@@ -181,10 +181,16 @@ def process_job(job_id: int) -> Optional[Dict]:
         return None
     
 
-def fetch_new_jobs_from_department(department_id: int, last_indexed_id: Optional[int], max_jobs: int = 300, page_size: int = 40) -> List[Dict]:
+def fetch_new_jobs_from_department(department_id: int, last_indexed_creation_date: Optional[int], max_jobs: int = 300, page_size: int = 40) -> List[Dict]:
     """Fetch only jobs newer than last_indexed_id filtered by department."""
     jobs = []
     page = 1
+    if last_indexed_creation_date:
+        dt_str = last_indexed_creation_date.replace("Z", "+00:00")
+        last_dt = datetime.fromisoformat(dt_str)
+    else:
+        last_dt = None
+
     while True:
         url = f"https://api.ejobs.ro/jobs?page={page}&pageSize={page_size}&filters.departments={department_id}&sort=date"
         logging.info(f"Fetching jobs from department {department_id}, page {page}")
@@ -200,11 +206,12 @@ def fetch_new_jobs_from_department(department_id: int, last_indexed_id: Optional
             # Filter out jobs already indexed (ID <= last_indexed_id)
             new_jobs_on_page = []
             for job in page_jobs:
-                if last_indexed_id is None or job["id"] > last_indexed_id:
+                job_dt = datetime.fromisoformat(job["creationDate"].replace("Z", "+00:00"))
+                if not last_dt or job_dt > last_dt:
                     new_jobs_on_page.append(job)
                 else:
                     # Job ID <= last indexed ID means no newer jobs past this
-                    logging.info(f"Reached job ID {job['id']} <= last indexed ID {last_indexed_id}, stopping fetch.")
+                    logging.info(f"Reached job with creationDate {job['creationDate']} <= last indexed {last_indexed_creation_date}, stopping fetch.")
                     break
 
             jobs.extend(new_jobs_on_page)

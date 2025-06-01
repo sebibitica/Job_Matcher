@@ -2,8 +2,9 @@ import numpy as np
 from src.clients.openai_embedding_client import OpenAIEmbeddingClient
 from src.clients.openai_gpt_client import OpenAIGPTClient
 from src.cv_processor.cv_processor import CVProcessor
+import asyncio
 
-def standardize_cv(gpt_client: OpenAIGPTClient, cv_raw: str) -> str:
+async def standardize_cv(gpt_client: OpenAIGPTClient, cv_raw: str) -> str:
     """Standardize CV text using GPT"""
     prompt = f"""
 Te rog să extragi și să structurezi informațiile din acest CV, ideal pentru a fi comparat semantic cu o descriere de job, punând accent pe domeniul de activitate. Pentru fiecare secțiune, menționează cum se leagă de domeniul principal de activitate al persoanei.
@@ -24,10 +25,10 @@ Experiență în domeniu:
 CV brut:
 """
     messages = [{"role":"system", "content":prompt},{"role": "user", "content": cv_raw}]
-    response = gpt_client.create(messages, temperature=0.7)
+    response = await gpt_client.create(messages, temperature=0.7)
     return response.choices[0].message.content
 
-def standardize_job(gpt_client: OpenAIGPTClient, job_raw: str) -> str:
+async def standardize_job(gpt_client: OpenAIGPTClient, job_raw: str) -> str:
     """Standardize job description using GPT"""
     prompt = f"""
 Te rog să extragi și să structurezi informațiile din această descriere de job, ideal pentru a fi comparat semantic cu un CV profesional, punând accent pe domeniul de activitate.
@@ -49,7 +50,7 @@ Cerințe specifice domeniului:
 Descriere job:
 """
     messages = [{"role":"system", "content":prompt},{"role": "user", "content": job_raw}]
-    response = gpt_client.create(messages, temperature=0.7)
+    response = await gpt_client.create(messages, temperature=0.7)
     return response.choices[0].message.content
 
 def cosine_similarity(vec1, vec2):
@@ -153,7 +154,7 @@ If you are interested to find out more about the Booking Holdings Center of Exce
 Booking Holdings (NASDAQ: BKNG) is the world’s leading provider of online travel and related services, provided to consumers and local partners in more than 220 countries and territories through five primary consumer facing brands: Booking.com, Priceline, Agoda, KAYAK and OpenTable. The mission of Booking Holdings is to make it easier for everyone to experience the world.
 """
 
-def main():
+async def main():
     embedding_client = OpenAIEmbeddingClient()
     gpt_client = OpenAIGPTClient()
     
@@ -164,18 +165,23 @@ def main():
 
     # Test 1: Direct embedding without GPT processing
     print("\nTesting direct embedding similarity:")
-    cv_emb = embedding_client.create(cv_text).data[0].embedding
-    job_emb = embedding_client.create(job_text).data[0].embedding
+    resp_cv_emb = await embedding_client.create(cv_text)
+    cv_emb = resp_cv_emb.data[0].embedding
+
+    resp_job_emb = await embedding_client.create(job_text)
+    job_emb = resp_job_emb.data[0].embedding
     raw_similarity = cosine_similarity(cv_emb, job_emb)
     print(f"Raw similarity score: {raw_similarity:.3f}")
 
     # Test 2: GPT processing before embedding
     print("\nTesting similarity with GPT preprocessing:")
-    cv_processed = standardize_cv(gpt_client, cv_text)
-    job_processed = standardize_job(gpt_client, job_text)
+    cv_processed = await standardize_cv(gpt_client, cv_text)
+    job_processed = await standardize_job(gpt_client, job_text)
     
-    cv_processed_emb = embedding_client.create(cv_processed).data[0].embedding
-    job_processed_emb = embedding_client.create(job_processed).data[0].embedding
+    resp_cv_processed_emb = await embedding_client.create(cv_processed)
+    cv_processed_emb = resp_cv_processed_emb.data[0].embedding
+    resp_job_processed_emb = await embedding_client.create(job_processed)
+    job_processed_emb = resp_job_processed_emb.data[0].embedding
     processed_similarity = cosine_similarity(cv_processed_emb, job_processed_emb)
     print(f"Processed similarity score: {processed_similarity:.3f}")
 
@@ -186,4 +192,4 @@ def main():
     print(job_processed)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

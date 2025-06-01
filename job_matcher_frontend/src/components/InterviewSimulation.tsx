@@ -51,7 +51,7 @@ const InterviewSimulation = () => {
       try {
         setIsLoadingInterviews(true);
         const token = await user?.getIdToken();
-        const response = await axios.get(`${API_URL}/interviews/user_interviews`, {
+        const response = await axios.get(`${API_URL}/interviews`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -146,7 +146,7 @@ const InterviewSimulation = () => {
     try {
       const token = await user?.getIdToken();
       await axios.delete(
-        `${API_URL}/interviews/delete/${interviewId}`,
+        `${API_URL}/interviews/${interviewId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setInterviews(prev => prev.filter(i => i.id !== interviewId));

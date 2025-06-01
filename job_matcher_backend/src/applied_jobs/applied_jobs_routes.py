@@ -3,10 +3,14 @@ from fastapi.responses import JSONResponse
 from ..clients.firebase.verify_token import get_current_user
 from .applied_jobs_manager import AppliedJobsManager
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/applied_jobs",
+    tags=["Applied Jobs"],
+    dependencies=[Depends(get_current_user)]
+)
 applied_jobs_manager = AppliedJobsManager()
 
-@router.post("/apply_to_job/{job_id}")
+@router.post("/apply/{job_id}")
 async def apply_to_job(
     job_id: str,
     user_id: str = Depends(get_current_user)
@@ -21,7 +25,7 @@ async def apply_to_job(
             status_code=500
         )
     
-@router.get("/applied_jobs")
+@router.get("/")
 async def get_applied_jobs(user_id: str = Depends(get_current_user)):
     """Retrieve all job applications for the current user."""
     try:
@@ -36,7 +40,7 @@ async def get_applied_jobs(user_id: str = Depends(get_current_user)):
             status_code=500
         )
     
-@router.delete("/applied_jobs/{application_id}")
+@router.delete("/{application_id}")
 async def delete_applied_job(
     application_id: str,
     user_id: str = Depends(get_current_user)
@@ -51,7 +55,7 @@ async def delete_applied_job(
             status_code=500
         )
     
-@router.get("/is_applied_job/{job_id}")
+@router.get("/is_applied/{job_id}")
 async def is_applied_job(
     job_id: str,
     user_id: str = Depends(get_current_user)

@@ -54,7 +54,7 @@ async def api_continue_interview(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/user_interviews")
+@router.get("/")
 async def api_get_user_interviews(user_id: str = Depends(get_current_user)):
     """Get all interviews for the current user."""
     try:
@@ -75,7 +75,7 @@ async def api_load_messages(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.delete("/delete/{interview_id}")
+@router.delete("/{interview_id}")
 async def api_delete_interview(
     interview_id: str,
     user_id: str = Depends(get_current_user)

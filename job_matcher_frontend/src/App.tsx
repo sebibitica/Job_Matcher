@@ -47,7 +47,7 @@ const App = () => {
     
         // Check if user has completed their profile
         const profileStatusRes = await axios.get(
-          `${API_URL}/is_user_profile`,
+          `${API_URL}/profile/is_complete`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
     
@@ -58,7 +58,7 @@ const App = () => {
     
         // Fetch job matches using completed profile
         const jobsRes = await axios.get(
-          `${API_URL}/get_job_matches_by_profile`,
+          `${API_URL}/match_jobs/by_profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
     
@@ -86,7 +86,7 @@ const App = () => {
       formData.append('file', file);
 
       const response = await axios.post(
-        `${API_URL}/get_job_matches_logged_out`,
+        `${API_URL}/match_jobs/cv_upload_logged_out`,
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

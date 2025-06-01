@@ -20,7 +20,7 @@ const ProfileUpload = ({ onComplete, onBack }: { onComplete: () => void; onBack:
 
       const token = await user.getIdToken();
       await axios.post(
-        `${API_URL}/set_user_profile_by_file`,
+        `${API_URL}/profile/set_by_file`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

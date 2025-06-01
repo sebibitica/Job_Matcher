@@ -5,13 +5,18 @@ from ..clients.firebase.verify_token import get_current_user
 
 from io import BytesIO
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/profile",
+    tags=["User Profile"],
+    dependencies=[Depends(get_current_user)]
+)
+
 manager = ProfileManager()
 
-@router.get("/is_user_profile")
+@router.get("/is_complete")
 async def get_user_profile(user_id: str = Depends(get_current_user)):
     """Check if the current user has a profile."""
-    profile = manager.get_user_profile(user_id)
+    profile = await manager.get_user_profile(user_id)
     if not profile:
         return {"status": "incomplete"}
     return {
@@ -19,7 +24,7 @@ async def get_user_profile(user_id: str = Depends(get_current_user)):
         "date_created": profile.get("date_created")
     }
 
-@router.post("/set_user_profile_by_file")
+@router.post("/set_by_file")
 async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = Depends(get_current_user)):
     """Set user profile using a CV file upload."""
     try:
@@ -36,12 +41,11 @@ async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-@router.post("/set_user_profile_by_text")
+@router.post("/set_by_text")
 async def set_user_profile_by_text(request: Request, user_id: str = Depends(get_current_user)):
     """Set user profile using structured text data."""
     try:
         body = await request.json()
-        print(body)
         profile_data = body.get("profile_data", {})
         if not profile_data:
             return JSONResponse(content={"error": "Missing profile_data"}, status_code=400)
@@ -58,8 +62,6 @@ async def set_user_profile_by_text(request: Request, user_id: str = Depends(get_
             sections.append("Education:\n" + "\n".join(f"- {e}" for e in education))
 
         profile_text = "\n\n".join(sections)
-
-        print(profile_text)
 
         result = await manager.set_user_profile_by_text(user_id, profile_text)
         return {"message": "Profile saved", "result": result}

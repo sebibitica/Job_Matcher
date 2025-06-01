@@ -1,6 +1,8 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import argparse
+import asyncio
+from datetime import datetime
 
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..clients.es_client import ElasticsearchClient
@@ -16,41 +18,43 @@ from .utils import (
 logging.basicConfig(level=logging.INFO)
 MAX_INITIAL_JOBS = 100
 DEPARTMENT_ID = 57
-MAX_WORKERS = 8
+MAX_CONCURRENT = 10
 
 embedding_client = OpenAIEmbeddingClient()
 es_client = ElasticsearchClient()
 text_preprocessor = TextPreprocessor()
 
 
-def process_single_job(job_id):
+async def process_single_job(job_id, semaphore):
     """Process and index a single job by job ID."""
-    job = process_job(job_id)
-    if not job:
-        return None, job_id
+    async with semaphore:
+        job = await asyncio.to_thread(process_job, job_id)
+        if not job:
+            return None, job_id
 
-    try:
-        embedding_description = clean_html_for_embedding(job["description"])
-        embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
-        preprocessed_description = text_preprocessor.preprocess_job(embedding_input)
-        embedding_response = embedding_client.create(preprocessed_description)
-        job["embedding"] = embedding_response.data[0].embedding
-        job.pop("meta_tags", None)
-        doc_id = generate_job_id(job)
-        es_client.index_job(doc_id, job)
-        logging.info(f"✅ Indexed job {job['site_id']} | {job['job_title']}")
-        return job_id, None
-    except Exception as e:
-        logging.error(f"❌ Failed to process/index job {job.get('site_id')}: {e}")
-        return None, job_id
+        try:
+            embedding_description = clean_html_for_embedding(job["description"])
+            embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
+            preprocessed_description = await text_preprocessor.preprocess_job(embedding_input)
+            embedding_response = await embedding_client.create(preprocessed_description)
+            job["embedding"] = embedding_response.data[0].embedding
+            job.pop("meta_tags", None)
+            doc_id = generate_job_id(job)
+            await es_client.index_job(doc_id, job)
+            logging.info(f"✅ Indexed job {job['site_id']} | {job['job_title']}")
+            return job_id, None
+        except Exception as e:
+            logging.error(f"❌ Failed to process/index job {job.get('site_id')}: {e}")
+            return None, job_id
 
 
-def process_and_index_new_jobs():
+async def process_and_index_new_jobs():
     """Process and index new jobs from ejobs.ro in parallel."""
-    metadata = es_client.get_metadata("last_ejobs_indexed_id")
-    last_indexed_id = metadata.get("value")
+    metadata = await es_client.get_metadata("last_ejobs")
+    last_indexed_id = metadata.get("id")
+    last_indexed_creation_date = metadata.get("creation_date")
 
-    latest_job_id = get_latest_job_id()
+    latest_job_id, latest_job_creation_date = await asyncio.to_thread(get_latest_job_id)
     if not latest_job_id:
         logging.error("❌ Failed to fetch latest job ID from ejobs.ro")
         return
@@ -70,48 +74,51 @@ def process_and_index_new_jobs():
         f"Scraping jobs from ID {latest_job_id} down to {last_indexed_id + 1}"
     )
     newest_scraped_id = latest_job_id
+    newest_scraped_creation_date = latest_job_creation_date
 
     job_ids = list(range(latest_job_id, last_indexed_id, -1))
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+    tasks = [process_single_job(job_id, semaphore) for job_id in job_ids]
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(process_single_job, job_id): job_id for job_id in job_ids
-        }
-        for future in as_completed(futures):
-            job_id, failed_id = future.result()
+    results = await asyncio.gather(*tasks)
 
-    es_client.update_metadata("last_ejobs_indexed_id", {"value": newest_scraped_id})
-    logging.info(f"✅ Updated metadata: last_ejobs_indexed_id = {newest_scraped_id}")
+    await es_client.update_metadata(
+        "last_ejobs",
+        {"id": newest_scraped_id, "creation_date": newest_scraped_creation_date}
+    )
+    logging.info(f"✅ Updated metadata: last_ejobs = {newest_scraped_id}")
 
 
-def process_single_department_job(job_summary):
+async def process_single_department_job(job_summary,semaphore):
     """Process and index a single job from a department."""
-    job_id = job_summary["id"]
-    job = process_job(job_id)
-    if not job:
-        logging.info(f"Skipping job {job_id}: not found or empty.")
-        return None, job_id
+    async with semaphore:
+        job_id = job_summary["id"]
+        job = await asyncio.to_thread(process_job, job_id)
+        if not job:
+            logging.info(f"Skipping job {job_id}: not found or empty.")
+            return None, job_id
 
-    try:
-        embedding_description = clean_html_for_embedding(job["description"])
-        embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
-        preprocessed_description = text_preprocessor.preprocess_job(embedding_input)
-        embedding_response = embedding_client.create(preprocessed_description)
-        job["embedding"] = embedding_response.data[0].embedding
-        job.pop("meta_tags", None)
-        doc_id = generate_job_id(job)
-        es_client.index_job(doc_id, job)
-        logging.info(f"✅ Indexed job {job['site_id']} | {job['job_title']}")
-        return job_id, None
-    except Exception as e:
-        logging.error(f"❌ Failed to index job {job.get('site_id')}: {e}")
-        return None, job_id
+        try:
+            embedding_description = clean_html_for_embedding(job["description"])
+            embedding_input = f"{job['job_title']}\n{embedding_description}\n{job['meta_tags']}"
+            preprocessed_description = await text_preprocessor.preprocess_job(embedding_input)
+            embedding_response = await embedding_client.create(preprocessed_description)
+            job["embedding"] = embedding_response.data[0].embedding
+            job.pop("meta_tags", None)
+            doc_id = generate_job_id(job)
+            await es_client.index_job(doc_id, job)
+            logging.info(f"✅ Indexed job {job['site_id']} | {job['job_title']}")
+            return job_id, None
+        except Exception as e:
+            logging.error(f"❌ Failed to index job {job.get('site_id')}: {e}")
+            return None, job_id
 
 
-def process_and_index_jobs_from_department():
+async def process_and_index_jobs_from_department():
     """Process and index new jobs from a specific department in parallel."""
-    metadata = es_client.get_metadata("last_ejobs_dept57_indexed_id")
-    last_indexed_id = metadata.get("value")
+    metadata = await es_client.get_metadata("last_ejobs_dept57")
+    last_indexed_id = metadata.get("id")
+    last_indexed_creation_date = metadata.get("creation_date")
 
     if last_indexed_id is None:
         logging.warning(
@@ -119,7 +126,7 @@ def process_and_index_jobs_from_department():
         )
         last_indexed_id = 0
 
-    jobs = fetch_new_jobs_from_department(DEPARTMENT_ID, last_indexed_id, max_jobs=300)
+    jobs = await asyncio.to_thread(fetch_new_jobs_from_department, DEPARTMENT_ID, last_indexed_creation_date, 300)
     logging.info(
         f"Total new jobs fetched for department {DEPARTMENT_ID}: {len(jobs)}"
     )
@@ -127,27 +134,28 @@ def process_and_index_jobs_from_department():
     if not jobs:
         logging.info("No new jobs to process.")
         return
+    
+    def parse_dt(job):
+        return datetime.fromisoformat(job["creationDate"].replace("Z", "+00:00"))
+    newest_job = max(jobs, key=parse_dt)
+    newest_job_id = newest_job["id"]
+    newest_job_creation_date = newest_job["creationDate"]
 
-    jobs.sort(key=lambda x: x["id"])
-    newest_job_id = last_indexed_id
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+    tasks = [process_single_department_job(job_summary, semaphore) for job_summary in jobs]
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {
-            executor.submit(process_single_department_job, job_summary): job_summary["id"]
-            for job_summary in jobs
-        }
-        for future in as_completed(futures):
-            job_id, failed_id = future.result()
-            if job_id and job_id > newest_job_id:
-                newest_job_id = job_id
+    results = await asyncio.gather(*tasks)
 
-    es_client.update_metadata("last_ejobs_dept57_indexed_id", {"value": newest_job_id})
+    await es_client.update_metadata(
+        "last_ejobs_dept57",
+        {"id": newest_job_id, "creation_date": newest_job_creation_date
+    })
+    
     logging.info(
-        f"✅ Updated metadata: last_ejobs_dept57_indexed_id = {newest_job_id}"
+        f"✅ Updated metadata: last_ejobs_dept57 = {newest_job_id}, {newest_job_creation_date}"
     )
 
-
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Job processing options")
     parser.add_argument(
         "--mode",
@@ -157,10 +165,18 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.mode == "all":
-        process_and_index_new_jobs()
-    elif args.mode == "both":
-        process_and_index_new_jobs()
-        process_and_index_jobs_from_department()
-    elif args.mode == "department":
-        process_and_index_jobs_from_department()
+    async def run_all():
+        if args.mode == "all":
+            await process_and_index_new_jobs()
+        elif args.mode == "both":
+            await process_and_index_new_jobs()
+            await process_and_index_jobs_from_department()
+        elif args.mode == "department":
+            await process_and_index_jobs_from_department()
+        
+        await es_client.client.close()
+
+    asyncio.run(run_all())
+
+if __name__ == "__main__":
+    main()

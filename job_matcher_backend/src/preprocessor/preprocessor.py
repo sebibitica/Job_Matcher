@@ -9,7 +9,7 @@ class TextPreprocessor:
     def __init__(self):
         self.gpt_client = OpenAIGPTClient()
 
-    def preprocess_cv(self, cv_raw: str) -> str:
+    async def preprocess_cv(self, cv_raw: str) -> str:
         """Standardize CV text using GPT"""
         prompt = f"""
         Te rog să extragi și să structurezi informațiile din acest CV, ideal pentru a fi comparat semantic cu o descriere de job, punând accent pe domeniul de activitate. Pentru fiecare secțiune, menționează cum se leagă de domeniul principal de activitate al persoanei.
@@ -30,10 +30,10 @@ class TextPreprocessor:
         CV brut:
         """
         messages = [{"role":"system", "content":prompt},{"role": "user", "content": cv_raw}]
-        response = self.gpt_client.create(messages, temperature=0.7)
+        response = await self.gpt_client.create(messages, temperature=0.7)
         return response.choices[0].message.content
     
-    def preprocess_job(self, job_raw: str) -> str:
+    async def preprocess_job(self, job_raw: str) -> str:
         """Standardize job description using GPT"""
         prompt = f"""
         Te rog să extragi și să structurezi informațiile din această descriere de job, ideal pentru a fi comparat semantic cu un CV profesional, punând accent pe domeniul de activitate.
@@ -55,5 +55,5 @@ class TextPreprocessor:
         Descriere job:
         """
         messages = [{"role":"system", "content":prompt},{"role": "user", "content": job_raw}]
-        response = self.gpt_client.create(messages, temperature=0.7)
+        response = await self.gpt_client.create(messages, temperature=0.7)
         return response.choices[0].message.content

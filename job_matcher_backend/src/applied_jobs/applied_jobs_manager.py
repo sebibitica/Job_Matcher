@@ -16,17 +16,16 @@ class AppliedJobsManager:
             "job_id": job_id,
             "applied_date": datetime.now(timezone.utc).isoformat(),
         }
-        return self.es.index_applied_job(document)
+        return await self.es.index_applied_job(document)
     
     async def get_enriched_applications(self, user_id: str):
-        """Retrieve all applications for a user, enriched with job data."""
-        applications = self.es.get_enriched_applications(user_id)
-        return applications
+        """Retrieve all applications for a user, enriched with job data.""" 
+        return await self.es.get_enriched_applications(user_id)
     
     async def delete_application(self, application_id: str, user_id: str):
         """Delete a user's job application."""
-        return self.es.delete_applied_job(application_id, user_id)
+        return await self.es.delete_applied_job(application_id, user_id)
     
     async def is_applied_job(self, user_id: str, job_id: str):
         """Check if a user has applied to a specific job."""
-        return self.es.is_applied_job(user_id, job_id)
+        return await self.es.is_applied_job(user_id, job_id)

@@ -20,7 +20,7 @@ const JobPage: React.FC = () => {
 
       try {
         const token = await user.getIdToken();
-        const response = await axios.get(`${API_URL}/is_applied_job/${id}`, {
+        const response = await axios.get(`${API_URL}/applied_jobs/is_applied/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('Is applied:', response.data);
@@ -40,7 +40,7 @@ const JobPage: React.FC = () => {
 
       try {
         const token = user ? await user.getIdToken() : null;
-        const response = await axios.get(`${API_URL}/jobs/${id}`, {
+        const response = await axios.get(`${API_URL}/search_jobs/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setJob(response.data.job);
@@ -59,7 +59,7 @@ const JobPage: React.FC = () => {
       const token = await user.getIdToken();
       if (!isApplied) {
         await axios.post(
-          `${API_URL}/apply_to_job/${job.id}`,
+          `${API_URL}/applied_jobs/apply/${job.id}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

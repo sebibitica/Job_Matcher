@@ -2,6 +2,7 @@ pdfservices-sdk==4.0.0
 openai
 docx2txt
 elasticsearch==8.17.1
+elasticsearch[async]
 python-dotenv
 fastapi
 uvicorn

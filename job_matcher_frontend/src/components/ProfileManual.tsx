@@ -33,7 +33,7 @@ const ProfileManual = ({ onComplete, onBack }: { onComplete: () => void; onBack:
 
     try {
       await axios.post(
-        `${API_URL}/set_user_profile_by_text`,
+        `${API_URL}/profile/set_by_text`,
         { profile_data },
         { headers: { Authorization: `Bearer ${token}` } }
       );
