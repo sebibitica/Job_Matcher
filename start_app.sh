@@ -36,7 +36,7 @@ export ELASTICSEARCH_URL="http://localhost:9200"
 nohup uvicorn api:app \
     --host 0.0.0.0 \
     --port 8000 \
-    --workers 1 \
+    --workers 4 \
     --reload \
     --no-access-log \
     > "$LOG_FILE" 2>&1 &

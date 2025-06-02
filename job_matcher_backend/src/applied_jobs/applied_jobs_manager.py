@@ -11,6 +11,9 @@ class AppliedJobsManager:
     
     async def save_application(self, user_id: str, job_id: str):
         """Save a new job application for a user."""
+        if await self.is_applied_job(user_id, job_id):
+            raise ValueError("User has already applied to this job.")
+        
         document = {
             "user_id": user_id,
             "job_id": job_id,

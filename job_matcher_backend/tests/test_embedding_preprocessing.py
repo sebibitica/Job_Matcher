@@ -4,6 +4,10 @@ from src.clients.openai_gpt_client import OpenAIGPTClient
 from src.cv_processor.cv_processor import CVProcessor
 import asyncio
 
+# TEST FOR DIFFERENCE BETWEEN NORMAL EMBEDDING VS GPT-PREPROCESSED EMBEDDING
+
+# Results: GPT preprocessing significantly improves similarity score
+
 async def standardize_cv(gpt_client: OpenAIGPTClient, cv_raw: str) -> str:
     """Standardize CV text using GPT"""
     prompt = f"""
@@ -97,61 +101,24 @@ Benefits: Company van, tool allowance, performance bonuses
 """
 
 programmer_job = """
-Ideal Candidate:
-​5+ years of experience in software development.
-More than 3 years of front-end development experience with React using TypeScript or JavaScript.
-Minimum of 2 years experience with 2 or more server-side programming languages, preferably Java and/or TypeScript.
-Extensive experience in building and maintaining scalable, responsive user interfaces using modern languages and frameworks.
-Proficient in using and consuming GraphQL and REST APIs.
-Continuous Quality and Process Improvement.
-Advocate of modern engineering best practices, including TDD, cloud computing, DDD, and observability.
-Experienced with relational databases such as MySQL and PostgreSQL.
-Experience in developing products impacting a large customer base is advantageous.
-Preferably holds a university degree in Mathematics or Software Engineering.
-Excellent written and verbal communication skills.
-
-
-Job Description:
-The Acceleration team will develop new features and expand the self-serving capabilities of existing systems to handle partner accounts at scale, with initial focus on automating backend operational tasks and improving onboarding and partner setup.
-
-This role provides a hybrid way of working with an onsite presence of 2 days/week.
-
-Key Job Responsibilities and Duties
-Building Software Applications: Strong proficiency in front-end programming languages like JavaScript / Typescript and frameworks like React
-Writing Quality Code: Ability to write scalable, readable, and reusable code adhering to coding standards, with a focus on refactoring and design patterns to ensure maintainability.
-End-to-End Ownership: Independently manage services from development to production, including monitoring application performance and implementing relevant SLIs, SLOs, and KPIs.
-Software System Design: Experience in evaluating and selecting architecture solutions that align with business and technology requirements, ensuring adaptability for future enhancements.
-Technical Incident Management: Ability to diagnose and resolve live production issues, contributing to reliability through root cause analysis and postmortem documentation.
-Continuous Quality Improvement: Identify areas for process optimization, designing and implementing improvements to enhance performance and efficiency.
-Collaborative Communication: Effective in delivering information tailored to audience needs, fostering team collaboration, and actively engaging in discussions to achieve shared goals.
-Recruiting: Contributing to the growth of Booking.com through interviewing, on-boarding, or other recruitment efforts
-
-Benefits:
-Healthinsurance
-Prepaid medical subscription (Regina Maria)
-Life insurance
-Meal vouchers
-Learning wallet
-Travel benefit
-Annual vacation leave of 25 business days, pro rata with the working period
-Birthday day off
-Summer break (short Fridays during summer)
-Work from Abroad program (up to 20 days/year in EU)
-Floating days off
-2 Volunteer days/ year
-Home office one-time bonus
-Bookster
-Linkedin learning platform
-Headspace
-Employee discounts (travel, gym, dental, vision)
-
-
-Company Description:
-Booking Holdings Center of Excellence is part of Booking Holdings, the world's leading provider of online travel and related services, with a rich heritage of digital innovation. The Center provides access to specialized and highly skilled talent, supports projects powered by new and emerging technologies, leverages industry best practices, and fosters collaboration opportunities across all of the Booking Holdings brands, including Booking.com, Priceline, Agoda, KAYAK and OpenTable.
-
-If you are interested to find out more about the Booking Holdings Center of Excellence visit our website: www.bookingholdings-coe.com.
-
-Booking Holdings (NASDAQ: BKNG) is the world’s leading provider of online travel and related services, provided to consumers and local partners in more than 220 countries and territories through five primary consumer facing brands: Booking.com, Priceline, Agoda, KAYAK and OpenTable. The mission of Booking Holdings is to make it easier for everyone to experience the world.
+Software Engineer / Full Stack Developer
+We are looking for a skilled software engineer with expertise in full stack development.
+Required experience: 4+ years in software
+development
+Main responsibilities:
+- Designing and implementing web applications
+- Collaborating with cross-functional teams
+- Writing clean, maintainable code
+- Debugging and optimizing existing applications
+Must have experience with:
+- JavaScript frameworks (React, Angular)
+- Backend technologies (Node.js, Python)
+- Database management (SQL, NoSQL)
+- Version control systems (Git)
+- Agile development methodologies
+- Excellent problem-solving skills
+- Strong communication skills
+- Ability to work independently and in a team
 """
 
 async def main():
