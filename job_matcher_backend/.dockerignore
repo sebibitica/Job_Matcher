@@ -5,3 +5,4 @@ __pycache__/
 *.pyd
 venv/
 job_matcher_diagram.png
+tests/
