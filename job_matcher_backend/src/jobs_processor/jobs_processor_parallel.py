@@ -70,13 +70,18 @@ async def process_and_index_new_jobs():
         )
         return
 
-    logging.info(
-        f"Scraping jobs from ID {latest_job_id} down to {last_indexed_id + 1}"
-    )
     newest_scraped_id = latest_job_id
     newest_scraped_creation_date = latest_job_creation_date
 
+    MAX_DAILY_JOBS = 50
     job_ids = list(range(latest_job_id, last_indexed_id, -1))
+    if len(job_ids) > MAX_DAILY_JOBS:
+        logging.info(f"⚠️ Limiting job processing to {MAX_DAILY_JOBS} jobs")
+        job_ids = job_ids[:MAX_DAILY_JOBS]
+    logging.info(
+        f"Scraping {len(job_ids)} jobs from ID {job_ids[0]} down to {job_ids[-1]}"
+    )
+
     semaphore = asyncio.Semaphore(MAX_CONCURRENT)
     tasks = [process_single_job(job_id, semaphore) for job_id in job_ids]
 
