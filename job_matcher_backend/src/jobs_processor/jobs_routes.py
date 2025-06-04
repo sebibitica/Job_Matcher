@@ -33,7 +33,7 @@ async def get_job(
     except Exception as e:
         return JSONResponse(content={"error": "Failed to retrieve job", "details": str(e)}, status_code=500)
     
-@router.post("/", response_model=list[BaseJob])
+@router.post("", response_model=list[BaseJob])
 async def job_search(
     request: SearchRequest,
     user_id: str = Depends(get_current_user)

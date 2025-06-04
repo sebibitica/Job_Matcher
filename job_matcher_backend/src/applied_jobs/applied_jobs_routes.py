@@ -25,7 +25,7 @@ async def apply_to_job(
             status_code=500
         )
     
-@router.get("/")
+@router.get("")
 async def get_applied_jobs(user_id: str = Depends(get_current_user)):
     """Retrieve all job applications for the current user."""
     try:
