@@ -51,6 +51,7 @@ class InterviewsManager(FirestoreClient):
         return [{
                     "id": doc.id,
                     "title": doc.to_dict().get("job_title"),
+                    "job_id": doc.to_dict().get("job_id"),
                     "last_updated": doc.to_dict().get('last_updated').isoformat(),
                  } async for doc in docs]
     

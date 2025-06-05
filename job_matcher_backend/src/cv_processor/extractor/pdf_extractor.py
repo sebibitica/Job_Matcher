@@ -3,7 +3,6 @@ import os
 import zipfile
 import json
 from io import BytesIO
-from dotenv import load_dotenv
 
 from adobe.pdfservices.operation.auth.service_principal_credentials import ServicePrincipalCredentials
 from adobe.pdfservices.operation.exception.exceptions import ServiceApiException, ServiceUsageException, SdkException
@@ -15,8 +14,6 @@ from adobe.pdfservices.operation.pdfjobs.jobs.extract_pdf_job import ExtractPDFJ
 from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_element_type import ExtractElementType
 from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_pdf_params import ExtractPDFParams
 from adobe.pdfservices.operation.pdfjobs.result.extract_pdf_result import ExtractPDFResult
-
-load_dotenv()
 
 adobe_client_id = os.getenv('ADOBE_PDF_SERVICES_CLIENT_ID')
 adobe_client_secret = os.getenv('ADOBE_PDF_SERVICES_CLIENT_SECRET')

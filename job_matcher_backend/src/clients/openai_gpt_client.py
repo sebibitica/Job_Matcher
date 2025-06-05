@@ -1,7 +1,4 @@
 from openai import AsyncOpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class OpenAIGPTClient:
     """Client for generating chat completions using the OpenAI GPT API."""

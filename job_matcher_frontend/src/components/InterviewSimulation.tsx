@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import '../styles/InterviewSimulation.css';
 import deleteIcon from '../assets/delete.svg';
+import externalLinkIcon from '../assets/external-link.svg';
 import { format, parseISO } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import { API_URL } from '../config/config';
@@ -11,6 +12,7 @@ import { API_URL } from '../config/config';
 interface Interview {
   id: string;
   title: string;
+  job_id: string;
   last_updated: string;
 }
 
@@ -196,7 +198,21 @@ const InterviewSimulation = () => {
                   <img src={deleteIcon} alt="Delete"/>
                 </button>
               </div>
-              <span>{formatDate(interview.last_updated)}</span>
+              <div style ={{marginTop: '1rem'}}></div>
+              <div className="interview-item-header">
+                <span>{formatDate(interview.last_updated)}</span>
+                {interview.job_id && (
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          navigate(`/job/${interview.job_id}`);
+                        }}
+                        title="Go to job page"
+                      >
+                        <img src={externalLinkIcon} alt="Go to Job"/>
+                      </button>
+                    )}
+              </div>
             </div>
           ))}
           { interviews.length === 0 && !isLoadingInterviews && (

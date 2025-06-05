@@ -4,12 +4,9 @@ import hashlib
 import json
 from typing import List, Dict, Optional
 from datetime import datetime
-from dotenv import load_dotenv
 import os
 import html
 from bs4 import BeautifulSoup
-
-load_dotenv()
 
 GOOGLE_GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")

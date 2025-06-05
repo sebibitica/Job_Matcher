@@ -1,7 +1,4 @@
 from openai import AsyncOpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class OpenAIEmbeddingClient:
     """Client for generating text embeddings using the OpenAI API."""

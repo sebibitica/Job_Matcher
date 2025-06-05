@@ -32,9 +32,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     env_file:
-      - ./job_matcher_backend/.env
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ./.env
     ports:
       - "8000:8000"
     depends_on:

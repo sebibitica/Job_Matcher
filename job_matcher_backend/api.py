@@ -7,6 +7,7 @@ from src.user_profile import profile_routes
 from src.jobs_matcher import jobs_matcher_routes
 from src.applied_jobs import applied_jobs_routes
 from src.jobs_processor import jobs_routes
+from src.clients.es_client import ElasticsearchClient
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,6 +17,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+@app.on_event("startup")
+async def ensure_es_indices():
+    es_client = ElasticsearchClient()
+    await es_client.ensure_indices_exist()
+    await es_client.client.close()
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):

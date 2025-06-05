@@ -9,6 +9,19 @@ BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BACKEND_DIR="$BASE_DIR/job_matcher_backend"
 FRONTEND_DIR="$BASE_DIR/job_matcher_frontend"
 
+if [ -f "$BASE_DIR/.env" ]; then
+    set -a
+    source "$BASE_DIR/.env"
+    set +a
+else
+    echo -e "${GREEN}No .env file found at $BASE_DIR/.env${NC}"
+    exit 1
+fi
+
+#override these variables for local development
+export ELASTICSEARCH_URL="http://localhost:9200"
+export VITE_API_URL="http://localhost:8000"
+
 LOG_DATE=$(date +%Y-%m-%d)
 LOG_DIR="$BASE_DIR/logs/$LOG_DATE"
 mkdir -p "$LOG_DIR"
@@ -30,8 +43,6 @@ sleep 10
 echo -e "${GREEN}Starting backend API...${NC}"
 cd "$BACKEND_DIR"
 source venv/bin/activate
-
-export ELASTICSEARCH_URL="http://localhost:9200"
 
 nohup uvicorn api:app \
     --host 0.0.0.0 \

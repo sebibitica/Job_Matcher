@@ -241,9 +241,19 @@
 
 /* responsive */
 @media (max-width: 1024px) {
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    min-height: 300px;
+    max-height: 85vh;
+  }
+
   .interview-container {
     flex-direction: column;
     height: auto;
+    padding: unset;
+    margin-top: 1rem;
   }
 
   .interview-sidebar {
@@ -259,11 +269,6 @@
   }
   .sidebar-toggle {
     display: block;
-  }
-
-  .interview-container {
-    flex-direction: column;
-    padding: 1rem;
   }
 
   .interview-sidebar {

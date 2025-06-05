@@ -1,14 +1,11 @@
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.exceptions import NotFoundError
-from dotenv import load_dotenv
 import os
 import uuid
 from typing import Optional
 from ..types.types import *
 import numpy as np
 import heapq
-
-load_dotenv()
 
 class ElasticsearchClient:
     """
@@ -19,6 +16,74 @@ class ElasticsearchClient:
         self.client = AsyncElasticsearch(
             os.getenv('ELASTICSEARCH_URL'),
         )
+    
+    async def ensure_indices_exist(self):
+        """Ensure all required indices exist with correct mappings."""
+        indices = {
+            "jobs": {
+                "mappings": {
+                    "properties": {
+                        "company": {"type": "keyword"},
+                        "date_uploaded": {"type": "date", "format": "strict_date_optional_time"},
+                        "description": {"type": "text"},
+                        "embedding": {
+                            "type": "dense_vector",
+                            "dims": 1536,
+                            "index": True,
+                            "similarity": "cosine",
+                            "index_options": {"type": "hnsw", "m": 32, "ef_construction": 100}
+                        },
+                        "expiration_date": {"type": "date", "format": "yyyy-MM-dd"},
+                        "job_title": {"type": "text"},
+                        "job_url": {"type": "keyword"},
+                        "location": {
+                            "properties": {
+                                "city": {"type": "keyword"},
+                                "country": {"type": "keyword"}
+                            }
+                        },
+                        "site_id": {"type": "keyword"}
+                    }
+                }
+            },
+            "scraper_metadata": {
+                "mappings": {
+                    "properties": {
+                        "creation_date": {"type": "date"},
+                        "id": {"type": "long"}
+                    }
+                }
+            },
+            "user_applied_jobs": {
+                "mappings": {
+                    "properties": {
+                        "applied_date": {"type": "date"},
+                        "job_id": {"type": "keyword"},
+                        "user_id": {"type": "keyword"}
+                    }
+                }
+            },
+            "user_profiles": {
+                "mappings": {
+                    "properties": {
+                        "date_created": {"type": "date"},
+                        "embedding": {
+                            "type": "dense_vector",
+                            "dims": 1536,
+                            "index": True,
+                            "similarity": "cosine",
+                            "index_options": {"type": "int8_hnsw", "m": 16, "ef_construction": 100}
+                        },
+                        "user_id": {"type": "keyword"}
+                    }
+                }
+            }
+        }
+
+        for index, body in indices.items():
+            exists = await self.client.indices.exists(index=index)
+            if not exists:
+                await self.client.indices.create(index=index, **body)
 
     # -------------------------------
     #     User Profile handling
