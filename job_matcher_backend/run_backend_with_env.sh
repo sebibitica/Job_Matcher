@@ -4,8 +4,8 @@ printenv | grep -v "no_proxy" > /etc/container_environment
 # Wait for Elasticsearch
 echo "Waiting for Elasticsearch..."
 until curl -s http://elasticsearch:9200 | grep -q '"tagline" : "You Know, for Search"'; do
-  echo "Elasticsearch not ready. Retrying..."
-  sleep 2
+  echo "Elasticsearch not ready yet. Waiting..."
+  sleep 3
 done
 
 echo "Elasticsearch is ready!"
