@@ -7,10 +7,10 @@ from ..preprocessor.preprocessor import TextPreprocessor
 class ProfileManager:
     """Manage user profiles in Elasticsearch"""
 
-    def __init__(self):
-        self.embedding_client = OpenAIEmbeddingClient()
-        self.es_client = ElasticsearchClient()
-        self.preprocessor = TextPreprocessor()
+    def __init__(self, embedding_client: OpenAIEmbeddingClient, es_client: ElasticsearchClient, preprocessor: TextPreprocessor):
+        self.embedding_client = embedding_client
+        self.es_client = es_client
+        self.preprocessor = preprocessor
 
     async def set_user_profile_by_file(self, user_id: str, file_stream):
         """Set user profile, using embedding from a CV file."""

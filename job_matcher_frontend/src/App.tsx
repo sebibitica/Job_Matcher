@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
 import HomePage from './components/HomePage';
@@ -15,23 +15,24 @@ import InterviewSimulation from './components/InterviewSimulation';
 import ProfilePage from './components/ProfilePage';
 import { API_URL } from './config/config';
 
-const App = () => {
+const AppContent = () => {
   const [jobs, setJobs] = useState<MatchedJob[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { user , isLoading: authLoading} = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+  const location = useLocation();
 
-  // Fetch jobs when user is authenticated
+  // Fetch jobs when location changes to home page or when user is authenticated
   useEffect(() => {
-    if(!authLoading){
+    if (!authLoading && location.pathname === '/') {
       handleGetJobs();
     }
-    if (!user){
+    if (!user) {
       setJobs([]);
       setMessage('');
     }
-  }, [user]);
+  }, [location.pathname, authLoading]);
 
   if (authLoading) {
     return null;
@@ -39,7 +40,7 @@ const App = () => {
 
   // Fetch job matches for logged-in users
   const handleGetJobs = async () => {
-    if (user){
+    if (user) {
       try {
         setIsLoading(true);
     
@@ -102,7 +103,7 @@ const App = () => {
   }
 
   return (
-    <Router>
+    <>
       <Header />
       <div className="app-container">
         <main className="main-content">
@@ -120,22 +121,30 @@ const App = () => {
                 />
               }
             />
-              <Route path="/job/:id" element={<JobPage />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/applied" element={<AppliedJobsPage />} />
-              </Route>
-              <Route element={<ProtectedRoute />}>
-                <Route path="/interviews" element={<InterviewSimulation />} />
-              </Route>
-              <Route element={<ProtectedRoute />}>
-                <Route path="/profile" element={<ProfilePage />} />
-              </Route>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-          </main>
-        </div>
-      </Router>
+            <Route path="/job/:id" element={<JobPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/applied" element={<AppliedJobsPage />} />
+            </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/interviews" element={<InterviewSimulation />} />
+            </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </main>
+      </div>
+    </>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 };
 

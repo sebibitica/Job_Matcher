@@ -7,10 +7,10 @@ from ..types.types import MatchedJob
 
 class JobsMatcher:
     """ Match jobs based on CV embeddings using Elasticsearch KNN and OpenAI embeddings. """
-    def __init__(self):
-        self.embedding_client = OpenAIEmbeddingClient()
-        self.es_client = ElasticsearchClient()
-        self.preprocessor = TextPreprocessor()
+    def __init__(self, embedding_client: OpenAIEmbeddingClient, es_client: ElasticsearchClient, preprocessor: TextPreprocessor):
+        self.embedding_client = embedding_client
+        self.es_client = es_client
+        self.preprocessor = preprocessor
 
     async def process_cv(self, file_stream: BytesIO):
         """ Process the CV to generate its embedding """

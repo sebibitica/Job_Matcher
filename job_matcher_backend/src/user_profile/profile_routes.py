@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Request
 from fastapi.responses import JSONResponse
-from .profile_manager import ProfileManager
 from ..clients.firebase.verify_token import get_current_user
+from ..dependencies.dependencies import get_profile_manager
 
 from io import BytesIO
 
@@ -11,10 +11,11 @@ router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
-manager = ProfileManager()
-
 @router.get("/is_complete")
-async def get_user_profile(user_id: str = Depends(get_current_user)):
+async def get_user_profile(
+    user_id: str = Depends(get_current_user),
+    manager = Depends(get_profile_manager)
+):
     """Check if the current user has a profile."""
     profile = await manager.get_user_profile(user_id)
     if not profile:
@@ -25,7 +26,11 @@ async def get_user_profile(user_id: str = Depends(get_current_user)):
     }
 
 @router.post("/set_by_file")
-async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = Depends(get_current_user)):
+async def set_user_profile_by_file(
+    file: UploadFile = File(...),
+    user_id: str = Depends(get_current_user),
+    manager = Depends(get_profile_manager)
+):
     """Set user profile using a CV file upload."""
     try:
         file_extension = file.filename.split(".")[-1].lower()
@@ -42,7 +47,11 @@ async def set_user_profile_by_file(file: UploadFile = File(...), user_id: str = 
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 @router.post("/set_by_text")
-async def set_user_profile_by_text(request: Request, user_id: str = Depends(get_current_user)):
+async def set_user_profile_by_text(
+    request: Request,
+    user_id: str = Depends(get_current_user),
+    manager = Depends(get_profile_manager)
+):
     """Set user profile using structured text data."""
     try:
         body = await request.json()

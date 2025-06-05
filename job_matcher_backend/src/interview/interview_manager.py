@@ -1,10 +1,3 @@
-from openai import AsyncOpenAI
-import os
-from ..clients.firestore.interviews_firestore import InterviewsManager
-
-client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-interviews_manager = InterviewsManager()
-
 SYSTEM_PROMPT = {
     "role": "system", 
     "content": """You are a professional interview coach. Your role is to:
@@ -22,14 +15,21 @@ SYSTEM_PROMPT = {
     """
 }
 
-async def initiate_chat(user_id: str, job_id: str, job_title: str, job_description: str) -> dict:
+async def initiate_chat(
+    user_id: str,
+    job_id: str,
+    job_title: str,
+    job_description: str,
+    interviews_manager,
+    openai_client
+) -> dict:
     """Start a new interview session and return the first AI response."""
     messages = [
         SYSTEM_PROMPT,
         {"role": "user", "content": job_description}
     ]
 
-    response = await client.chat.completions.create(
+    response = await openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=messages,
         temperature=0.7,
@@ -48,7 +48,13 @@ async def initiate_chat(user_id: str, job_id: str, job_title: str, job_descripti
     
     return {"interview_id": interview_id, "ai_response": ai_reply}
 
-async def continue_chat(user_id: str, interview_id: str, user_message: str) -> str:
+async def continue_chat(
+    user_id: str,
+    interview_id: str,
+    user_message: str,
+    interviews_manager,
+    openai_client
+) -> str:
     """Continue an interview session with a new user message."""
     messages = await interviews_manager.load_messages(user_id, interview_id)
 
@@ -57,7 +63,7 @@ async def continue_chat(user_id: str, interview_id: str, user_message: str) -> s
 
     messages.append({"role": "user", "content": user_message})
 
-    response = await client.chat.completions.create(
+    response = await openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=messages,
         temperature=0.7,
@@ -70,15 +76,26 @@ async def continue_chat(user_id: str, interview_id: str, user_message: str) -> s
     await interviews_manager.save_messages(user_id, interview_id, messages)
     return ai_reply
 
-async def get_interviews_for_user(user_id: str) -> list:
+async def get_interviews_for_user(
+    user_id: str,
+    interviews_manager
+) -> list:
     """Get all interviews for a user."""
     return await interviews_manager.get_user_interviews(user_id)
 
-async def load_interview_messages(user_id: str, interview_id: str) -> list:
+async def load_interview_messages(
+    user_id: str,
+    interview_id: str,
+    interviews_manager
+) -> list:
     """Load all messages for a specific interview."""
     return await interviews_manager.load_messages(user_id, interview_id)
 
-async def delete_interview(user_id: str, interview_id: str):
+async def delete_interview(
+    user_id: str,
+    interview_id: str,
+    interviews_manager
+):
     """Delete an interview and its messages"""
     try:
         await interviews_manager.delete_interview(user_id, interview_id)

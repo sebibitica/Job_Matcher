@@ -1,18 +1,18 @@
 from fastapi import UploadFile, File, Depends, APIRouter
 from fastapi.responses import JSONResponse
 from io import BytesIO
-from .jobs_matcher import JobsMatcher
 from ..clients.firebase.verify_token import get_current_user
+from ..dependencies.dependencies import get_jobs_matcher
 
 router = APIRouter(
     prefix="/match_jobs",
     tags=["Jobs Matcher"]
 )
-jobs_matcher = JobsMatcher()
 
 @router.get("/by_profile")
 async def get_job_matches_by_profile(
-    user_id: str = Depends(get_current_user)
+    user_id: str = Depends(get_current_user),
+    jobs_matcher = Depends(get_jobs_matcher)
 ):
     """Get matching jobs for the current user's profile."""
     try:
@@ -28,7 +28,10 @@ async def get_job_matches_by_profile(
         return JSONResponse(content={"error": "Failed to match jobs", "details": str(e)}, status_code=500)
 
 @router.post("/cv_upload_logged_out")
-async def get_job_matches_by_cv_upload(file: UploadFile = File(...)):
+async def get_job_matches_by_cv_upload(
+    file: UploadFile = File(...),
+    jobs_matcher = Depends(get_jobs_matcher)
+):
     """Get matching jobs by uploading a CV file (for logged-out users)."""
     try:
         file_extension = file.filename.split(".")[-1].lower()

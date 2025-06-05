@@ -1,19 +1,19 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from ..clients.firebase.verify_token import get_current_user
-from .applied_jobs_manager import AppliedJobsManager
+from ..dependencies.dependencies import get_applied_jobs_manager
 
 router = APIRouter(
     prefix="/applied_jobs",
     tags=["Applied Jobs"],
     dependencies=[Depends(get_current_user)]
 )
-applied_jobs_manager = AppliedJobsManager()
 
 @router.post("/apply/{job_id}")
 async def apply_to_job(
     job_id: str,
-    user_id: str = Depends(get_current_user)
+    user_id: str = Depends(get_current_user),
+    applied_jobs_manager = Depends(get_applied_jobs_manager)
 ):
     """Apply the current user to a job."""
     try:
@@ -26,7 +26,10 @@ async def apply_to_job(
         )
     
 @router.get("")
-async def get_applied_jobs(user_id: str = Depends(get_current_user)):
+async def get_applied_jobs(
+    user_id: str = Depends(get_current_user),
+    applied_jobs_manager = Depends(get_applied_jobs_manager)
+):
     """Retrieve all job applications for the current user."""
     try:
         applications = await applied_jobs_manager.get_enriched_applications(user_id)
@@ -43,7 +46,8 @@ async def get_applied_jobs(user_id: str = Depends(get_current_user)):
 @router.delete("/{application_id}")
 async def delete_applied_job(
     application_id: str,
-    user_id: str = Depends(get_current_user)
+    user_id: str = Depends(get_current_user),
+    applied_jobs_manager = Depends(get_applied_jobs_manager)
 ):
     """Delete a job application for the current user."""
     try:        
@@ -58,7 +62,8 @@ async def delete_applied_job(
 @router.get("/is_applied/{job_id}")
 async def is_applied_job(
     job_id: str,
-    user_id: str = Depends(get_current_user)
+    user_id: str = Depends(get_current_user),
+    applied_jobs_manager = Depends(get_applied_jobs_manager)
 ):
     """Check if the current user has applied to a specific job."""
     try:

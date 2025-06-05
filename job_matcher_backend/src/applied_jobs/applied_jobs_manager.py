@@ -6,8 +6,8 @@ class AppliedJobsManager:
     """
     Handles saving, retrieving, and deleting job applications for users.
     """
-    def __init__(self):
-        self.es = ElasticsearchClient()
+    def __init__(self, es_client: ElasticsearchClient):
+        self.es = es_client
     
     async def save_application(self, user_id: str, job_id: str):
         """Save a new job application for a user."""
