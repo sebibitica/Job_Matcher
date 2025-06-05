@@ -58,5 +58,4 @@ networks:
 
 volumes:
   es_data:
-    name: job_matcher_backend_es_data
-    external: true
+    driver: local
