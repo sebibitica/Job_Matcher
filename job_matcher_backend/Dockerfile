@@ -5,7 +5,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update && apt-get install -y cron
+RUN apt-get update && apt-get install -y curl cron && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # Copy application code
 COPY . .
