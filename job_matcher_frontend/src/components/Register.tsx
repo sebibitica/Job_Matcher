@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
@@ -11,7 +12,8 @@ export default function Register() {
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { signUp, isLoading } = useAuth();
+  const { signUp, isLoading, signInWithGoogle } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,15 +38,31 @@ export default function Register() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      navigate('/');
+    } catch (err) {
+      setError('Failed to sign in with Google.');
+    }
+  };
+
   return (
     <div className="auth-container">
       <h2>Register</h2>
       {error && <div className="error-message">{error}</div>}
       {successMessage && (
+        <>
         <div className="success-message">
           {successMessage}
         </div>
+        <div className="auth-links">
+          Verified your account? <Link to="/login">Login</Link>
+        </div>
+        </>
       )}
+      {!successMessage && (
+      <>
       <form onSubmit={handleSubmit}>
       <input
           type="email"
@@ -78,9 +96,18 @@ export default function Register() {
           {isLoading ? 'Creating account...' : 'Register'}
         </button>
       </form>
+      <button 
+        onClick={handleGoogleSignIn} 
+        className="google-button"
+        disabled={isLoading}
+      >
+        Sign in with Google
+      </button>
       <div className="auth-links">
         Already have an account? <Link to="/login">Login</Link>
       </div>
+      </>
+      )}
     </div>
   );
 }

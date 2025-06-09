@@ -9,6 +9,7 @@ import { useSearchParams} from 'react-router-dom';
 import { useRef } from 'react';
 import filterIcon from '../assets/filter.svg';
 import { API_URL } from '../config/config.ts';
+import { Link } from 'react-router-dom';
 
 interface HomePageProps {
   file: File | null;
@@ -27,7 +28,7 @@ const HomePage = ({
   message,
   isLoading,
 }: HomePageProps) => {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const [searchTerm, setSearchTerm] = useState(searchQuery);
@@ -225,7 +226,7 @@ const HomePage = ({
       {(searchTerm || selectedCountry) && <div className="search-backdrop" />}
       
       {/* File upload for logged-out users */}
-      {!user && (
+      {!user && !authLoading && (
           <FileUpload
             selectedFile={file}
             onFileChange={onFileChange}
@@ -234,7 +235,7 @@ const HomePage = ({
           />
       )}
 
-      {!user && jobs.length < 1 &&(
+      {!user && !authLoading && jobs.length < 1 &&(
         <div className="account-benefits">
           <h2>Why create an account?</h2>
           <ul>
@@ -257,6 +258,13 @@ const HomePage = ({
       {message && !message.toLowerCase().includes('successful') && (
         <div className={`message-home ${message.includes('successful') ? 'success' : 'error'}`}>
           {message}
+          {message === 'Please complete your profile to get job matches.' && (
+            <div style={{ marginTop: '8px' }}>
+              <Link to="/profile" className="profile-link">
+                Go to Profile
+              </Link>
+            </div>
+          )}
         </div>
       )}
 

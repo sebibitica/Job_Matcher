@@ -46,7 +46,7 @@ async def perf_test_job_search(n=20):
     async with httpx.AsyncClient() as client:
         start = time.perf_counter()
         tasks = [
-            client.post(f"http://localhost:8000/search_jobs/", json=payload, headers=headers)
+            client.post(f"http://localhost:8000/search_jobs", json=payload, headers=headers)
             for _ in range(n)
         ]
         responses = await asyncio.gather(*tasks)
@@ -133,7 +133,7 @@ async def perf_test_interview_get_all(n=10):
     async with httpx.AsyncClient(timeout=10.0) as client:
         start = time.perf_counter()
         tasks = [
-            client.get("http://localhost:8000/interviews/", headers=headers)
+            client.get("http://localhost:8000/interviews", headers=headers)
             for _ in range(n)
         ]
         responses = await asyncio.gather(*tasks)
@@ -151,7 +151,7 @@ async def perf_test_applied_jobs_get_all(n=20):
     async with httpx.AsyncClient(timeout=10.0) as client:
         start = time.perf_counter()
         tasks = [
-            client.get("http://localhost:8000/applied_jobs/", headers=headers)
+            client.get("http://localhost:8000/applied_jobs", headers=headers)
             for _ in range(n)
         ]
         responses = await asyncio.gather(*tasks)
@@ -228,11 +228,11 @@ if __name__ == "__main__":
     asyncio.run(perf_test_profile_is_complete(50))
     asyncio.run(perf_test_profile_set_by_text(10))
 
-    asyncio.run(perf_test_interview_continue("3f729eca-f19e-4032-9c32-40e980c344a6", 1))
+    asyncio.run(perf_test_interview_continue("1a6849e7-a2e7-488a-9ef1-22b97849fd9d", 20))
     asyncio.run(perf_test_interview_get_all(50))
 
     asyncio.run(perf_test_applied_jobs_get_all(20))
     asyncio.run(perf_test_applied_jobs_is_applied("jobs_matcher_1", 10))
-    asyncio.run(perf_test_applied_jobs_apply("900ed0652e4b21691c90ff409d3dfef1e16cc27455f296bed1177b235a182883", 2))
+    asyncio.run(perf_test_applied_jobs_apply("41afe575e690b4a9a1610d0cadc97218398856d91faaee9e441c7a31c9f3b4c4", 20))
 
     asyncio.run(perf_test_match_jobs_by_profile(10))

@@ -4,6 +4,14 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.jobs_matcher.jobs_matcher import JobsMatcher
+from src.clients.es_client import ElasticsearchClient
+from src.clients.openai_embedding_client import OpenAIEmbeddingClient
+from src.preprocessor.preprocessor import TextPreprocessor
+
+es_client = ElasticsearchClient()
+embedding_client = OpenAIEmbeddingClient()
+preprocessor = TextPreprocessor()
+
 
 # TESTS FOR KNN RANKING OF JOBS
 
@@ -73,7 +81,7 @@ def mean_reciprocal_rank(result_ids, expected_jobs_list):
     return 0.0
 
 async def main():
-    matcher = JobsMatcher()
+    matcher = JobsMatcher(embedding_client, es_client, preprocessor)
     top_k = 10
 
     total_recall = 0

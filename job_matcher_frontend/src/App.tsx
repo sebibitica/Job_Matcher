@@ -34,10 +34,6 @@ const AppContent = () => {
     }
   }, [location.pathname, authLoading]);
 
-  if (authLoading) {
-    return null;
-  }
-
   // Fetch job matches for logged-in users
   const handleGetJobs = async () => {
     if (user) {

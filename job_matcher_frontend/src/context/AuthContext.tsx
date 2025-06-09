@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, signInWithEmailAndPassword,sendEmailVerification, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
+import { User, signInWithEmailAndPassword,sendEmailVerification, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 
 interface AuthContextType {
@@ -9,6 +9,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, nickname: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -21,7 +22,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      if (user && !user.emailVerified) {
+        setUser(null);
+      } else {
+        setUser(user);
+      }
       setIsLoading(false);
     });
     return unsubscribe;
@@ -85,8 +90,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Reset password
+  const resetPassword = async (email: string) => {
+    setIsLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signInWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signInWithGoogle, logout,resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

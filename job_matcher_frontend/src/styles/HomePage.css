@@ -146,6 +146,19 @@
   font-weight: bold;
 }
 
+.profile-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.profile-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
 
 @media (max-width: 768px) {
   .search-results-container {
