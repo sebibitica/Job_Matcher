@@ -74,6 +74,10 @@ class ElasticsearchClient:
                             "similarity": "cosine",
                             "index_options": {"type": "int8_hnsw", "m": 16, "ef_construction": 100}
                         },
+                        "structured_profile": {
+                            "type": "object",
+                            "enabled": False
+                        },
                         "user_id": {"type": "keyword"}
                     }
                 }

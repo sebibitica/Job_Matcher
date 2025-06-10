@@ -5,6 +5,7 @@ from .extractor.pdf_extractor import PDFExtractor
 from .extractor.docx_extractor import DOCXExtractor
 from ..clients.openai_embedding_client import OpenAIEmbeddingClient
 from ..preprocessor.preprocessor import TextPreprocessor
+from ..user_profile.profile_structurer.profile_structurer import ProfileStructurer
 
 class CVProcessor:
     """Process CV files to extract text, preprocess it and generate embeddings."""
@@ -23,6 +24,33 @@ class CVProcessor:
             embedding = response_embedding.data[0].embedding
             
             return embedding
+        finally:
+            file_stream.close()
+    
+    @staticmethod
+    async def process_file_with_structure(file_stream: BytesIO, preprocessor: TextPreprocessor, 
+                    embedding_client: OpenAIEmbeddingClient, profile_structurer: ProfileStructurer):
+        """Process a CV file and return its embedding"""
+        try:
+            raw_text = await asyncio.to_thread(CVProcessor.extract_text, file_stream)
+
+            structured_profile_str = await profile_structurer.structure_profile(raw_text)
+
+            import json
+            try:
+                structured_profile = json.loads(structured_profile_str)
+            except Exception as e:
+                raise ValueError(f"Failed to parse structured profile JSON from GPT: {e}")
+
+            preprocessed_text = await preprocessor.preprocess_cv(raw_text)
+
+            response_embedding = await embedding_client.create(preprocessed_text)
+
+            embedding = response_embedding.data[0].embedding
+            
+            return embedding, structured_profile
+        except Exception as e:
+            raise ValueError(f"Failed to process CV file: {e}")
         finally:
             file_stream.close()
     

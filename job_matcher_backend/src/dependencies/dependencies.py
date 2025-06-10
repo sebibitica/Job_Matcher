@@ -7,6 +7,7 @@ from src.clients.openai_gpt_client import OpenAIGPTClient
 from src.preprocessor.preprocessor import TextPreprocessor
 from src.jobs_matcher.jobs_matcher import JobsMatcher
 from src.applied_jobs.applied_jobs_manager import AppliedJobsManager
+from src.user_profile.profile_structurer.profile_structurer import ProfileStructurer
 
 es_client = ElasticsearchClient()
 embedding_client = OpenAIEmbeddingClient()
@@ -14,9 +15,10 @@ openai_clean_client = AsyncOpenAI()
 gpt_client = OpenAIGPTClient()
 
 preprocessor = TextPreprocessor()
+profile_structurer = ProfileStructurer()
 
 interviews_manager = InterviewsManager()
-profile_manager = ProfileManager(embedding_client, es_client, preprocessor)
+profile_manager = ProfileManager(embedding_client, es_client, preprocessor, profile_structurer)
 jobs_matcher = JobsMatcher(embedding_client, es_client, preprocessor)
 applied_jobs_manager = AppliedJobsManager(es_client)
 

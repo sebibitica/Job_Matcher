@@ -82,13 +82,34 @@ async def perf_test_profile_is_complete(n=50):
 
 async def perf_test_profile_set_by_text(n=20):
     headers = {"Authorization": f"Bearer {TOKEN}"}
-    payload = {
-        "profile_data": {
-            "experience": ["Software Engineer at X", "Intern at Y"],
-            "skills": ["Python", "FastAPI", "Elasticsearch"],
-            "education": ["Bachelor CS", "Master AI"]
-        }
+    profile_data = {
+        "summary": "Software developer with 2 years of experience in web technologies.",
+        "experience": [
+            {
+                "title": "Junior Developer",
+                "company": "TechCorp",
+                "startDate": "2022-01",
+                "endDate": "Present",
+                "description": "Developed and maintained web applications using React and Node.js."
+            }
+        ],
+        "education": [
+            {
+                "degree": "Bachelor",
+                "field": "Computer Science",
+                "institution": "Tech University",
+                "startDate": "2018-09",
+                "endDate": "2022-06"
+            }
+        ],
+        "skills": ["JavaScript", "React", "Node.js", "Git"]
     }
+    
+    import json
+    payload = {
+        "profile_text": json.dumps(profile_data)
+    }
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         start = time.perf_counter()
         tasks = [

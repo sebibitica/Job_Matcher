@@ -28,11 +28,16 @@ const AppContent = () => {
     if (!authLoading && location.pathname === '/') {
       handleGetJobs();
     }
-    if (!user) {
+  }, [location.pathname === '/', authLoading]);
+
+  // Reset data when user logs out
+  useEffect(() => {
+    if(!user){
       setJobs([]);
       setMessage('');
+      setFile(null);
     }
-  }, [location.pathname, authLoading]);
+  }, [user]);
 
   // Fetch job matches for logged-in users
   const handleGetJobs = async () => {

@@ -25,6 +25,17 @@ async def get_user_profile(
         "date_created": profile.get("date_created")
     }
 
+@router.get("/data")
+async def get_profile_data(
+    user_id: str = Depends(get_current_user),
+    manager = Depends(get_profile_manager)
+):
+    """Get the structured profile data for the current user."""
+    profile = await manager.get_user_profile(user_id)
+    if not profile or "structured_profile" not in profile:
+        return JSONResponse(content={"error": "Profile not found"}, status_code=404)
+    return profile["structured_profile"]
+
 @router.post("/set_by_file")
 async def set_user_profile_by_file(
     file: UploadFile = File(...),
@@ -52,27 +63,22 @@ async def set_user_profile_by_text(
     user_id: str = Depends(get_current_user),
     manager = Depends(get_profile_manager)
 ):
-    """Set user profile using structured text data."""
+    """Set user profile using structured JSON data from frontend complete manual form."""
     try:
         body = await request.json()
-        profile_data = body.get("profile_data", {})
-        if not profile_data:
-            return JSONResponse(content={"error": "Missing profile_data"}, status_code=400)
+        
+        profile_text_json = body.get("profile_text")
+        if not profile_text_json:
+            return JSONResponse(content={"error": "Missing profile_text"}, status_code=400)
+        
+        import json
+        try:
+            structured_data = json.loads(profile_text_json)
+        except json.JSONDecodeError:
+            return JSONResponse(content={"error": "Invalid JSON in profile_text"}, status_code=400)
 
-        sections = []
-
-        if experience := profile_data.get("experience"):
-            sections.append("Experience:\n" + "\n".join(f"- {e}" for e in experience))
-
-        if skills := profile_data.get("skills"):
-            sections.append("Skills:\n" + ", ".join(skills))
-
-        if education := profile_data.get("education"):
-            sections.append("Education:\n" + "\n".join(f"- {e}" for e in education))
-
-        profile_text = "\n\n".join(sections)
-
-        result = await manager.set_user_profile_by_text(user_id, profile_text)
-        return {"message": "Profile saved", "result": result}
+        await manager.set_user_profile_by_text(user_id, structured_data)
+        
+        return {"message": "Profile saved"}
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
