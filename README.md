@@ -1,5 +1,11 @@
 # Job Matcher Platform
 
+## Live Demo
+
+**Try the application at [https://jobsmatcher.xyz](https://jobsmatcher.xyz)**
+
+The live version is fully hosted with a populated database containing numerous job listings ready for testing. For local testing and development, [follow the setup instructions below](#setup--configuration).
+
 ## Overview
 
 **Job Matcher** is an AI-powered platform that matches user CVs with relevant job opportunities and helps them prepare for interviews with an AI Interview Simulator. The platform provides:
@@ -62,7 +68,7 @@ The entire platform can be launched using Docker Compose:
 
 ```sh
 # Start all services
-docker-compose up -d
+docker-compose up --build
 ```
 
 This will start:
@@ -82,15 +88,17 @@ To stop the application:
 docker-compose down
 ```
 
----
+### Important: Initial Database Population
 
-## Automated Jobs Processing
+**Note:** When first running the application locally, the Elasticsearch database will be empty. You will need to run the jobs processor to populate it with job listings before you can see any job matching results.
 
-The system automatically runs the jobs processor daily at 2PM UTC to fetch and index new job listings.
+## Jobs Processing
 
-### Manual Jobs Processing
+The system automatically runs the jobs processor daily at 2PM UTC to fetch and index new job listings, but you need to run it manually for the initial database population.
 
-If you want to run the jobs processor manually:
+### Running the Jobs Processor Manually
+
+To populate the database with job listings:
 
 ```sh
 # Access the backend container
@@ -99,6 +107,13 @@ docker exec -it backend /bin/bash
 # Run the jobs processor
 python3 -m src.jobs_processor.jobs_processor_parallel
 ```
+
+This process may take some time depending on your system resources. Once completed, the database will be populated with job listings and the application will be ready to use.
+
+You can verify the data has been loaded by:
+1. Checking Kibana at http://localhost:5601 if enabled
+2. Visiting the frontend application and searching for jobs
+3. Checking the job processing logs with `docker exec -it backend tail -f /var/log/jobs_processor.log`
 
 ---
 
