@@ -7,11 +7,14 @@ services:
       - "9300:9300"
     volumes:
       - es_data:/usr/share/elasticsearch/data/
+    env_file:
+      - .env
     environment:
       - node.name=elasticsearch
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     networks:
       - app-network
@@ -21,6 +24,12 @@ services:
     container_name: kibana
     ports:
       - "5601:5601"
+    env_file:
+      - .env
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
     networks:
       - app-network
     depends_on:
@@ -37,18 +46,6 @@ services:
       - "8000:8000"
     depends_on:
       - elasticsearch
-    networks:
-      - app-network
-    
-  frontend:
-    build:
-      context: ./job_matcher_frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
     networks:
       - app-network
 

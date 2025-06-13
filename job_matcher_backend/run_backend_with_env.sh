@@ -1,9 +1,14 @@
 #!/bin/sh
 printenv | grep -v "no_proxy" > /etc/container_environment
 
+if [ -z "$ELASTICSEARCH_URL" ]; then
+  echo "ERROR: ELASTICSEARCH_URL is not set."
+  exit 1
+fi
+
 # Wait for Elasticsearch
-echo "Waiting for Elasticsearch..."
-until curl -s http://elasticsearch:9200 | grep -q '"tagline" : "You Know, for Search"'; do
+echo "Waiting for Elasticsearch ..."
+until curl -s "$ELASTICSEARCH_URL" | grep -q '"tagline" : "You Know, for Search"'; do
   echo "Elasticsearch not ready yet. Waiting..."
   sleep 3
 done
