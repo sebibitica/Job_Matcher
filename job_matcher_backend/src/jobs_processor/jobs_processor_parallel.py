@@ -165,7 +165,7 @@ def main():
     parser.add_argument(
         "--mode",
         choices=["all", "department", "both"],
-        default="all",
+        default="both",
         help="Which job processing to run: all (default), department, or both"
     )
     args = parser.parse_args()
