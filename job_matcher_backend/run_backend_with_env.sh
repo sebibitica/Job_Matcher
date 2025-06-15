@@ -11,4 +11,4 @@ done
 echo "Elasticsearch is ready!"
 
 service cron start
-uvicorn api:app --host 0.0.0.0 --port 8000 --workers 4
+uvicorn api:app --host 0.0.0.0 --port 8000
