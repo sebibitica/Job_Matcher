@@ -1,11 +1,5 @@
 # Platformă Job Matcher
 
-## Demo Live
-
-**Încercați aplicația la [https://jobsmatcher.xyz](https://jobsmatcher.xyz)**
-
-Versiunea live este complet hostată cu o bază de date populată ce conține numeroase anunțuri de joburi gata pentru a fi încercate. Pentru rularea si testarea aplicației locală, [urmați instrucțiunile de configurare de mai jos](#configurare).
-
 ## Prezentare generală
 
 **Job Matcher** este o platformă bazată pe inteligență artificială care potrivește CV-urile utilizatorilor cu oportunități relevante de angajare și îi ajută să se pregătească pentru interviuri cu un Simulator de Interviu AI. Platforma oferă:

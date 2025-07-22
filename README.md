@@ -1,11 +1,5 @@
 # Job Matcher Platform
 
-## Live Demo
-
-**Try the application at [https://jobsmatcher.xyz](https://jobsmatcher.xyz)**
-
-The live version is fully hosted with a populated database containing numerous job listings ready for testing. For local testing and development, [follow the setup instructions below](#setup--configuration).
-
 ## Overview
 
 **Job Matcher** is an AI-powered platform that matches user CVs with relevant job opportunities and helps them prepare for interviews with an AI Interview Simulator. The platform provides:
